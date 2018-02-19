@@ -1,0 +1,21 @@
+{
+  "all": true,
+  "include": [
+    "bin/",
+    "lib/"
+  ],
+  "reporter": ["lcov", "text"],
+  "report-dir": ".reports",
+  "temp-directory": ".reports/.nyc_output",
+  "per-file": true,
+  "branches": 80,
+  "functions": 80,
+  "lines": 80,
+  "statements": 80,
+  "watermarks": {
+    "branches": [80, 90],
+    "functions": [80, 90],
+    "lines": [80, 90],
+    "statements": [80, 90]
+  }
+}

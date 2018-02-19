@@ -1,0 +1,18 @@
+---
+plugins:
+  - chai-expect
+rules:
+  import/no-dynamic-require: 0
+  no-unused-expressions: 0
+  # Rules of plugin `chai-expect`.
+  chai-expect/missing-assertion: error
+  chai-expect/no-inner-compare: error
+  chai-expect/terminating-properties: error
+globals:
+  expect: false
+env:
+    atomtest: true
+    browser: true
+    node: true
+    mocha: true
+    shared-node-browser: true
