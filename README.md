@@ -36,6 +36,13 @@
     <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="MIT license">
   </a>
 </p>
+<p align="center">
+  <strong>SECURITY</strong>
+  <br />
+  <a href="https://snyk.io/test/github/cgalvarez/atom-coverage">
+    <img src="https://snyk.io/test/github/cgalvarez/atom-coverage/badge.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/cgalvarez/atom-coverage" style="max-width:100%;"/>
+  </a>
+</p>
 
 AtomCoverage allows you to perform code coverage analysis on your Atom package by means of `istanbul/nyc`.
 
