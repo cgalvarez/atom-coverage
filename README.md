@@ -42,6 +42,22 @@
   <a href="https://snyk.io/test/github/cgalvarez/atom-coverage">
     <img src="https://snyk.io/test/github/cgalvarez/atom-coverage/badge.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/cgalvarez/atom-coverage" style="max-width:100%;"/>
   </a>
+  <a href="https://www.bithound.io/github/cgalvarez/atom-coverage/master/dependencies/npm">
+    <img src="https://www.bithound.io/github/cgalvarez/atom-coverage/badges/dependencies.svg" alt="bitHound Dependencies">
+  </a>
+  <a href="https://www.bithound.io/github/cgalvarez/atom-coverage/master/dependencies/npm">
+    <img src="https://www.bithound.io/github/cgalvarez/atom-coverage/badges/devDependencies.svg" alt="bitHound Dev Dependencies">
+  </a>
+</p>
+<p align="center">
+  <strong>QUALITY</strong>
+  <br />
+  <a href="https://www.bithound.io/github/cgalvarez/atom-coverage">
+    <img src="https://www.bithound.io/github/cgalvarez/atom-coverage/badges/score.svg" alt="bitHound Overall Score">
+  </a>
+  <a href="https://www.bithound.io/github/cgalvarez/atom-coverage">
+    <img src="https://www.bithound.io/github/cgalvarez/atom-coverage/badges/code.svg" alt="bitHound Code">
+  </a>
 </p>
 
 AtomCoverage allows you to perform code coverage analysis on your Atom package by means of `istanbul/nyc`.
