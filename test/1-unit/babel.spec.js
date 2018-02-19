@@ -16,7 +16,8 @@ const data = require('../helpers/data');
 
 // Variables & constants.
 const cwd = process.cwd();
-const expectedFilepath = join(cwd, '.babelrc');
+const defaultConfigFile = '.babelrc';
+const expectedFilepath = join(cwd, defaultConfigFile);
 const noop = () => {};
 let babel;
 let spy;
@@ -34,83 +35,63 @@ const requireUUT = (done, proxyquireStubs) => {
 
 const restoreSandbox = () => mock.sandbox.restore(spy, stub);
 
-const mockBabelConfigFile = () => {
-  const configFiles = {};
-  configFiles[data.config.babel.filenames.default] =
-    JSON.stringify(data.config.babel.defaults, null, 2);
-  mock.fs.localFiles(configFiles);
-};
-
 describe('UNIT TESTS: babel transpiler', () => {
-  describe('findConfigFile()', () => {
-    beforeEach(() => {
-      requireUUT();
-      // 3. Stub/spy same module functions/methods called by the UUT.
-      spy = { findConfigFile: sinon.spy(babel, 'findConfigFile') };
-    });
-
-    afterEach(restoreSandbox);
-
-    it('should throw if no .babelrc found at project root (current working dir)', () => {
-      // 4. Mock filesystem (if read/write operations present) ~> NONE
-      // 5. Test!
-      const badCall = () => babel.findConfigFile();
-      // 6. Assertions.
-      expect(badCall).to.throw();
-      expect(spy.findConfigFile).to.have.been.calledOnce
-        .and.calledWith().and.have.thrown();
-    });
-
-    it('should store the config filepath when found', () => {
-      // 4. Mock filesystem (if read/write operations present) ~> .babelrc
-      mockBabelConfigFile();
-      // 5. Test!
-      expect(babel.config).to.have.property('filepath', undefined);
-      const filepath = babel.findConfigFile();
-      // 6. Assertions.
-      expect(filepath).to.be.a('string').that.equals(expectedFilepath);
-      expect(babel.config).to.have.property('filepath', expectedFilepath);
-      expect(spy.findConfigFile).to.have.been.calledOnce
-        .and.have.been.calledWith()
-        .and.have.returned(expectedFilepath)
-        .and.have.not.thrown();
-    });
-  });
-
   describe('readConfig()', () => {
-    beforeEach(() => {
-      requireUUT();
-      // 3. Stub/spy same module functions/methods called by the UUT.
-      spy = { readConfig: sinon.spy(babel, 'readConfig') };
-    });
-
     afterEach(restoreSandbox);
-
-    it('should throw if no config filepath set', () => {
-      // 4. Mock filesystem (if read/write operations present) ~> NONE
-      // 5. Test!
-      const badCall = () => babel.readConfig();
-      // 6. Assertions.
-      expect(badCall).to.throw();
-      expect(spy.readConfig).to.have.been.calledOnce
-        .and.calledWith().and.have.thrown();
-    });
 
     it('should parse contents of config file', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      const utilStubs = {
+        readConfig: () => _.cloneDeep(data.config.babel.defaults),
+        findConfigFile: () => defaultConfigFile,
+      };
+      spy = {
+        util: {
+          readConfig: sinon.spy(utilStubs.readConfig),
+          findConfigFile: sinon.spy(utilStubs.findConfigFile),
+        },
+      };
+      requireUUT(undefined, { '../util': spy.util });
+      spy.babel = { readConfig: sinon.spy(babel, 'readConfig') };
       // 4. Mock filesystem (if read/write operations present) ~> .babelrc
-      mockBabelConfigFile();
       // 5. Test!
-      babel.config.filepath = join(cwd, data.config.babel.filenames.default);
-      const readConfig = babel.readConfig();
+      babel.readConfig();
       // 6. Assertions.
       expect(babel.config).to.have.property('settings')
         .that.is.an('object').and.deep.equal(data.config.babel.defaults);
-      expect(spy.readConfig).to.have.been.calledOnce
+      expect(spy.babel.readConfig).to.have.been.calledOnce
         .and.have.been.calledWith()
-        .and.have.returned(data.config.babel.defaults)
+        .and.have.returned()
         .and.have.not.thrown();
-      expect(readConfig).to.be.an('object')
-        .that.deep.equals(data.config.babel.defaults);
+      expect(spy.util.findConfigFile).to.have.been.calledOnce;
+      expect(spy.util.readConfig).to.have.been.calledOnce;
+    });
+
+    it('should set empty settings if no config file found', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      const utilStubs = {
+        readConfig: () => undefined,
+        findConfigFile: () => undefined,
+      };
+      spy = {
+        util: {
+          readConfig: sinon.spy(utilStubs.readConfig),
+          findConfigFile: sinon.spy(utilStubs.findConfigFile),
+        },
+      };
+      requireUUT(undefined, { '../util': spy.util });
+      spy.babel = { readConfig: sinon.spy(babel, 'readConfig') };
+      // 4. Mock filesystem (if read/write operations present) ~> .babelrc
+      // 5. Test!
+      babel.readConfig();
+      // 6. Assertions.
+      expect(babel.config).to.have.deep.property('settings', {});
+      expect(spy.babel.readConfig).to.have.been.calledOnce
+        .and.have.been.calledWith()
+        .and.have.returned()
+        .and.have.not.thrown();
+      expect(spy.util.findConfigFile).to.have.been.calledOnce;
+      expect(spy.util.readConfig).to.have.not.been.called;
     });
   });
 
@@ -123,10 +104,24 @@ describe('UNIT TESTS: babel transpiler', () => {
 
     afterEach(restoreSandbox);
 
-    it('should create config file', () => {
+    it('should save config file', () => {
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       mock.fs.localFiles({});
       babel.config.filepath = expectedFilepath;
+      babel.config.settings = _.cloneDeep(data.config.babel.defaults);
+      // 5. Test!
+      babel.saveConfig();
+      // 6. Assertions.
+      expect(spy.saveConfig).to.have.been.calledOnce
+        .and.returned().and.calledWith().and.have.not.thrown();
+      expect(existsSync(expectedFilepath)).to.be.a('boolean').that.equals(true);
+      expect(readJSONSync(expectedFilepath)).to.be.an('object')
+        .that.deep.equals(data.config.babel.defaults);
+    });
+
+    it('should create default config file if none present', () => {
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      mock.fs.localFiles({});
       babel.config.settings = _.cloneDeep(data.config.babel.defaults);
       // 5. Test!
       babel.saveConfig();
@@ -150,12 +145,8 @@ describe('UNIT TESTS: babel transpiler', () => {
     afterEach(restoreSandbox);
 
     it('should find config file and fetch config if not settings set', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT.
-      stub.findConfigFile = sinon.stub(babel, 'findConfigFile').callsFake(() => {
-        babel.config.filepath = expectedFilepath;
-        return expectedFilepath;
-      });
       stub.readConfig = sinon.stub(babel, 'readConfig').callsFake(() => {
+        babel.config.filepath = expectedFilepath;
         babel.config.settings = _.cloneDeep(data.config.babel.defaults);
         return babel.config.settings; // data.config.babel.defaults;
       });
@@ -167,10 +158,6 @@ describe('UNIT TESTS: babel transpiler', () => {
         .and.have.been.calledWith(data.config.atomCoverage.defaults)
         .and.have.returned()
         .and.have.not.thrown();
-      expect(stub.findConfigFile).to.have.been.calledOnce
-        .and.have.been.calledWith()
-        .and.have.returned(expectedFilepath)
-        .and.have.not.thrown();
       expect(stub.readConfig).to.have.been.calledOnce
         .and.have.been.calledWith()
         .and.have.returned(data.config.babel.defaults)
@@ -179,9 +166,7 @@ describe('UNIT TESTS: babel transpiler', () => {
 
     it('should use existing settings if previously fetched', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
-      ['findConfigFile', 'readConfig'].forEach((method) => {
-        spy[method] = sinon.spy(babel, method);
-      });
+      spy.readConfig = sinon.spy(babel, 'readConfig');
       babel.config.filepath = expectedFilepath;
       babel.config.settings = _.cloneDeep(data.config.babel.defaults);
       // 4. Mock filesystem (if read/write operations present) ~> NONE
@@ -192,7 +177,6 @@ describe('UNIT TESTS: babel transpiler', () => {
         .and.have.been.calledWith(data.config.atomCoverage.defaults)
         .and.have.returned()
         .and.have.not.thrown();
-      expect(spy.findConfigFile).to.have.not.been.called;
       expect(spy.readConfig).to.have.not.been.called;
     });
 
@@ -422,7 +406,7 @@ describe('UNIT TESTS: babel transpiler', () => {
       // 5. Test!
       babel.ensureConfig(data.config.atomCoverage.defaults, true);
       // 6. Assertions.
-      expect(babel.config.modified).to.be.a('boolean').that.equals(true);
+      expect(babel.config.modified).to.be.a('boolean').that.equals(false);
       expect(stub.saveConfig).to.have.been.calledOnce
         .and.have.been.calledWith()
         .and.have.returned()

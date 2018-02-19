@@ -6,7 +6,7 @@ const _ = require('lodash');
 const cwd = process.cwd();
 
 // Filesystem.
-const localFiles = (files) => {
+const localFiles = (files = {}) => {
   const fakeFS = {};
   _.forEach(files, (contents, filename) => {
     const filepath = isAbsolute(filename) ? filename : join(cwd, filename);
