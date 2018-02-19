@@ -3,7 +3,7 @@
   AtomCoverage
   &nbsp;<img src="https://github.com/zeke/atom-icon/raw/master/old-icon/2.png" width="30px" />
 </h1>
-<h3 align="center">Add code coverage to your ES6 Atom package<br />
+<h3 align="center">Add code coverage to your ES6 Atom package</h3>
 <p align="center">
   <strong>PACKAGE</strong>
   <br />
