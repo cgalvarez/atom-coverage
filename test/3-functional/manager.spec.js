@@ -1,10 +1,3 @@
-//readdirSync(cwd).forEach(file => console.log(file));
-// System modules & package deps.
-const { existsSync, readdirSync, readJSONSync } = require('fs-extra');
-const { join, sep } = require('path');
-const { safeDump } = require('js-yaml');
-const _ = require('lodash');
-
 // Testing utils/frameworks.
 const chai = require('chai');
 const sinon = require('sinon');
@@ -14,12 +7,8 @@ chai.use(sinonChai);
 
 // Testing helpers (mocks/data).
 const mock = require('../helpers/mock');
-const data = require('../helpers/data');
 
 // Variables & constants.
-const cwd = process.cwd();
-const expectedFilepath = join(cwd, '.atom-coverage');
-const noop = () => {};
 let manager;
 let spy;
 let stub;
@@ -36,21 +25,6 @@ const requireUUT = (done, proxyquireStubs = {}) => {
 };
 
 const restoreSandbox = () => mock.sandbox.restore(spy, stub);
-
-const mockConfigFile = (
-  file = data.config.atomCoverage.filenames.default,
-  format = 'JSON',
-  customOptions = _.cloneDeep(data.config.atomCoverage.defaults),
-) => {
-  const configFiles = {};
-  const options = _.defaultsDeep({}, customOptions);
-  switch (format) {
-    case 'JSON': configFiles[file] = JSON.stringify(options, null, 2); break;
-    case 'YAML': configFiles[file] = safeDump(options); break;
-    default: break;
-  }
-  mock.fs.localFiles(configFiles);
-};
 
 describe('FUNCTIONAL TESTS: manager', () => {
   describe('testquire()', () => {

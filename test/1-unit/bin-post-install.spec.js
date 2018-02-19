@@ -4,13 +4,9 @@ const _ = require('lodash');
 
 // Testing utils/frameworks.
 const chai = require('chai');
-const sinon = require('sinon');
 const sinonChai = require('sinon-chai'); // eslint-disable-line import/newline-after-import
 const { expect } = chai;
 chai.use(sinonChai);
-
-// Testing helpers (mocks/data).
-const mock = require('../helpers/mock');
 
 const cwd = process.cwd();
 const initCwd = process.env.INIT_CWD;

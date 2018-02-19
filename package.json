@@ -75,7 +75,7 @@
     "dev:watch": "chokidar 'bin/**/*.js' 'lib/**/*.js' 'test/**/*.js' '.nycrc.json' 'test/mocha.opts' -c 'reset && npm run test:coverage; npm run check:complexity'",
     "check:coverage": "nyc check-coverage",
     "check:complexity": "es6-plato -q -r -d $npm_package_config_reportsFolder/complexity lib bin",
-    "lint:js": "eslint bin lib",
+    "lint:js": "eslint bin lib test",
     "postinstall": "node bin/post-install.js",
     "test": "cd test && mocha ./**/*.{spec,test}.js --opts ./mocha.opts",
     "test:watch": "cd test && mocha --watch ./**/*.{spec,test}.js --opts ./mocha.opts",
