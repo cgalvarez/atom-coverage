@@ -7,22 +7,35 @@
 <p align="center">
   <strong>PACKAGE</strong>
   <br />
-  [![Semver](http://img.shields.io/SemVer/2.0.0.png)](http://semver.org/spec/v2.0.0.html)
+  <a href="http://semver.org/spec/v2.0.0.html">
+    <img src="http://img.shields.io/SemVer/2.0.0.png" alt="Semantic Versioning 2.0.0">
+  </a>
 </p>
 <p align="center">
   <strong>VCS</strong>
   <br />
-  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat&logo=github)](http://makeapullrequest.com)
-  [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat)](http://commitizen.github.io/cz-cli/)
-  <br />
-  [![Follow angular commit convention](https://img.shields.io/badge/follow-angular%20commit%20convention-blue.svg)](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines)
-  [![Semantic release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://semantic-release.gitbooks.io/semantic-release/content/)
+  <a href="http://makeapullrequest.com">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat&logo=github" alt="Pull requests welcome!" />
+  </a>
+  <a href="http://commitizen.github.io/cz-cli/">
+    <img src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat" alt="Commitizen friendly" />
+  </a>
+  <a href="https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines">
+    <img src="https://img.shields.io/badge/follow-angular%20commit%20convention-blue.svg" alt="Follow angular commit convention" />
+  </a>
+  <a href="https://semantic-release.gitbooks.io/semantic-release/content/">
+    <img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="Semantic release" />
+  </a>
 </p>
 <p align="center">
   <strong>LEGAL</strong>
   <br />
-  [![Love Open Source](https://img.shields.io/badge/Open%20Source-♥-ff69b4.svg?style=flat)](https://opensource.org/)
-  [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://opensource.org/licenses/MIT)
+  <a href="https://opensource.org/">
+    <img src="https://img.shields.io/badge/Open%20Source-♥-ff69b4.svg?style=flat" alt="Love open source">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="MIT license">
+  </a>
 </p>
 
 AtomCoverage allows you to perform code coverage analysis on your Atom package by means of `istanbul/nyc`.
