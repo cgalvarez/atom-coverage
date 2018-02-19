@@ -74,6 +74,8 @@ Why? Because those are the frameworks I'm actively testing due to my own needs. 
 
 ## Quickstart
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/cgalvarez/atom-coverage.svg)](https://greenkeeper.io/)
+
 ```shell
            $ cd your-atom-pkg
            # Choose one of the following depending on your package manager.
