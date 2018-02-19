@@ -39,6 +39,9 @@
 <p align="center">
   <strong>SECURITY</strong>
   <br />
+  <a href="https://greenkeeper.io/">
+    <img src="https://badges.greenkeeper.io/cgalvarez/atom-coverage.svg" alt="Greenkeeper enabled" />
+  </a>
   <a href="https://snyk.io/test/github/cgalvarez/atom-coverage">
     <img src="https://snyk.io/test/github/cgalvarez/atom-coverage/badge.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/cgalvarez/atom-coverage" style="max-width:100%;"/>
   </a>
@@ -238,6 +241,7 @@ AtomCoverage works for me. I don't have issues with it right now. If you find an
 
 ## Some ideas for future development
 
+- [ ] Use [`greenkeeper-lockfile`](https://github.com/greenkeeperio/greenkeeper-lockfile) on CI.
 - [ ] Implement CD (Continuous Development) feedback through NPM script `test:coverage:watch` by instrumenting/covering on-the-fly only modified source files and re-running `nyc`.
 - [ ] Create a NPM script to open HTML coverage reports in the browser after being generated.
 - [ ] Inject code to leverage from [`browsersync`](https://browsersync.io/) into the HTML coverage reports to refresh automatically on re-generation.
