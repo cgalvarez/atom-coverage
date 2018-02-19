@@ -1,7 +1,6 @@
+<link rel="stylesheet" type="text/css" media="all" href="./docs/assets/readme.css" />
 <h1 align="center">
-  <img src="https://github.com/npm/logos/raw/master/%22npm%22%20lockup/npm-logo-simplifed-with-white-space.png" width="100px" />
   AtomCoverage
-  &nbsp;<img src="https://github.com/zeke/atom-icon/raw/master/old-icon/2.png" width="30px" />
 </h1>
 <h3 align="center">Add code coverage to your ES6 Atom package</h3>
 <p align="center">
@@ -257,7 +256,3 @@ $ npm run semantic-commit-retry
 ## License
 
 AtomCoverage is released under the [MIT License](./LICENSE).
-
-The alternative Atom icon is &#169; [Zeke Sikelianos](https://github.com/zeke/atom-icon).
-
-The NPM logo is &#169; [npm, Inc.](https://github.com/npm/logos).
