@@ -65,7 +65,7 @@ describe('UNIT TESTS: util', () => {
     ['true', 'on', '1', true, 1].forEach((truthyValue) => {
       it(`should return \`true\` for env var with truthy value \`${truthyValue}\``, () => {
         const envVar = 'RANDOM_ENV_VAR';
-        process.env[envVar] = truthyValue;
+        mock.env.backup(envVar, truthyValue);
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
         const envHasVar = util.envHas(envVar);
@@ -75,7 +75,7 @@ describe('UNIT TESTS: util', () => {
           .and.have.been.calledWith(envVar)
           .and.have.returned(true);
         // Reset sandbox.
-        delete process.env[envVar];
+        mock.env.restore(envVar);
       });
     });
 
@@ -83,7 +83,7 @@ describe('UNIT TESTS: util', () => {
     ['falsy', 'off', '0', 0, [], {}, 3.14, false, () => {}].forEach((falsyValue) => {
       it(`should return \`false\` for env var with falsy value \`${falsyValue}\``, () => {
         const envVar = 'RANDOM_ENV_VAR';
-        process.env[envVar] = falsyValue;
+        mock.env.backup(envVar, falsyValue);
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
         const envHasVar = util.envHas(envVar);
@@ -93,7 +93,7 @@ describe('UNIT TESTS: util', () => {
           .and.have.been.calledWith(envVar)
           .and.have.returned(false);
         // Reset sandbox.
-        delete process.env[envVar];
+        mock.env.restore(envVar);
       });
     });
   });

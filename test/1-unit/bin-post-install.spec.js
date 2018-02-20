@@ -8,8 +8,11 @@ const sinonChai = require('sinon-chai'); // eslint-disable-line import/newline-a
 const { expect } = chai;
 chai.use(sinonChai);
 
+// Testing helpers (mocks/data).
+const mock = require('../helpers/mock');
+
+const INIT_CWD = 'INIT_CWD';
 const cwd = process.cwd();
-const initCwd = process.env.INIT_CWD;
 const fakeCwd = join(cwd, 'fake');
 const npmConfigPath = join(fakeCwd, 'package.json');
 const uutAbspath = join(cwd, '..', 'bin', 'post-install.js');
@@ -24,16 +27,15 @@ const expectedNpmConfig = {
 };
 
 describe('UNIT TESTS: post-install script', () => {
-  // beforeEach(requireUUT);
   afterEach(() => {
-    process.env.INIT_CWD = initCwd;
+    mock.env.restore(INIT_CWD);
     writeJSONSync(npmConfigPath, {});
     // We have to remove the UUT from the `require()` cache, or it will only be exec once.
     delete require.cache[uutAbspath];
   });
 
   it("should do nothing if it's post-install hook of `atom-coverage` itself", () => {
-    process.env.INIT_CWD = cwd;
+    mock.env.backup(INIT_CWD, cwd);
     // 3. Stub/spy same module functions/methods called by the UUT.
     // 4. Mock filesystem (if read/write operations present) ~> NONE.
     // 5. Test!
@@ -45,7 +47,7 @@ describe('UNIT TESTS: post-install script', () => {
   });
 
   it('should do nothing if no package.json found', () => {
-    process.env.INIT_CWD = join(cwd, 'custom', 'fake', 'folder');
+    mock.env.backup(INIT_CWD, join(cwd, 'custom', 'fake', 'folder'));
     // 3. Stub/spy same module functions/methods called by the UUT.
     // 4. Mock filesystem (if read/write operations present) ~> NONE.
     // 5. Test!
@@ -55,7 +57,7 @@ describe('UNIT TESTS: post-install script', () => {
   });
 
   it('should add two new NPM scripts to package.json if not present: "test:coverage" and "check:coverage"', () => {
-    process.env.INIT_CWD = fakeCwd;
+    mock.env.backup(INIT_CWD, fakeCwd);
     // 3. Stub/spy same module functions/methods called by the UUT.
     // 4. Mock filesystem (if read/write operations present) ~> NONE.
     // 5. Test!
@@ -72,7 +74,7 @@ describe('UNIT TESTS: post-install script', () => {
   };
   _.forEach(existingScript, (cmd, script) => {
     it(`should not add the NPM script "${script}" to package.json if present`, () => {
-      process.env.INIT_CWD = fakeCwd;
+      mock.env.backup(INIT_CWD, fakeCwd);
       // 3. Stub/spy same module functions/methods called by the UUT.
       // 4. Mock filesystem (if read/write operations present) ~> NONE.
       const existingNpmConfig = { scripts: {} };
@@ -89,7 +91,7 @@ describe('UNIT TESTS: post-install script', () => {
   });
 
   it('should not modify package.json if all scripts present', () => {
-    process.env.INIT_CWD = fakeCwd;
+    mock.env.backup(INIT_CWD, fakeCwd);
     // 3. Stub/spy same module functions/methods called by the UUT.
     // 4. Mock filesystem (if read/write operations present) ~> NONE.
     writeJSONSync(npmConfigPath, expectedNpmConfig, { spaces: 2 });

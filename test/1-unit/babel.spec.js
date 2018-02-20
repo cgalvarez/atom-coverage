@@ -452,9 +452,7 @@ describe('UNIT TESTS: babel transpiler', () => {
           COVERAGE: 'true',
           NODE_ENV: 'dev',
         };
-        _.forEach(envVars, (value, envVar) => {
-          process.env[envVar] = value;
-        });
+        _.forEach(envVars, (value, envVar) => mock.env.backup(envVar, value));
         const atomCoverageConfig = _.cloneDeep(data.config.atomCoverage.defaults);
         atomCoverageConfig.instrumentedPath = join('.reports', '.instrumented');
         atomCoverageConfig.sourcesRoot = `lib${sep}`;
@@ -470,9 +468,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         expect(stub.execSync.args[0][1]).to.have.property('env')
           .that.has.all.keys('BABEL_ENV', 'COVERAGE', 'NODE_ENV', 'PATH');
         // Reset sandbox.
-        _.forEach(envVars, (value, envVar) => {
-          delete process.env[envVar];
-        });
+        _.forEach(envVars, (value, envVar) => mock.env.restore(envVar));
       });
     });
 

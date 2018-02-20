@@ -1,6 +1,7 @@
 // System modules & package deps.
 const { existsSync, readJSONSync } = require('fs-extra');
 const { join, sep } = require('path');
+const crypto = require('crypto');
 const glob = require('glob');
 const _ = require('lodash');
 
@@ -498,6 +499,16 @@ describe('UNIT TESTS: nyc instrumenter', () => {
 
     it('should write to disk the collected coverage', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
+      if (!_.has(process.env, 'COVERAGE')) {
+        // Running tests without coverage... we have to mock up the global coverage object!
+        const fakeCoveredPath = './fake/covered/file/path.js';
+        const coverageInfo = {};
+        coverageInfo[fakeCoveredPath] = {
+          path: fakeCoveredPath,
+          hash: crypto.randomBytes(20).toString('hex'),
+        };
+        global.__coverage__ = coverageInfo; // eslint-disable-line no-underscore-dangle
+      }
       // 4. Mock filesystem (if read/write operations present) ~> done by `setupAtomMochaSandbox()`.
       // 5. Test! Will use this package coverage...
       nyc.collectCoverage();
@@ -509,6 +520,10 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       const coverageFileContent = readJSONSync(coverageFiles[0]);
       // eslint-disable-next-line no-underscore-dangle
       expect(coverageFileContent).to.be.an('object').that.deep.equals(global.__coverage__);
+      // Reset sandbox.
+      if (!_.has(process.env, 'COVERAGE')) {
+        delete global.__coverage__; // eslint-disable-line no-underscore-dangle
+      }
     });
   });
 

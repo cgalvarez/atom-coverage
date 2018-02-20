@@ -18,7 +18,6 @@ const localFiles = (files = {}) => {
 const restore = () => fsMock.restore();
 
 const setupSandbox = (uutPath, proxyquireStubs, key) => {
-  // console.log('proxyquire stubs:', proxyquireStubs);
   let uut;
   if (proxyquireStubs) {
     uut = proxyquire(uutPath, proxyquireStubs);
@@ -61,7 +60,24 @@ const restoreSandbox = (spy, stub) => {
   }
 };
 
+const backupEnvVar = {};
+const doEnvBackup = (envVar, value) => {
+  if (_.has(process.env, envVar)) {
+    backupEnvVar[envVar] = process.env[envVar];
+  }
+  process.env[envVar] = value;
+};
+const restoreEnvBackup = (envVar) => {
+  delete process.env[envVar];
+  if (!_.has(backupEnvVar, envVar)) return;
+  process.env[envVar] = backupEnvVar[envVar];
+};
+
 module.exports = {
+  env: {
+    backup: doEnvBackup,
+    restore: restoreEnvBackup,
+  },
   fs: {
     localFiles,
     restore,
