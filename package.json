@@ -17,7 +17,7 @@
     "fs-extra": "^5.0.0",
     "glob": "^7.1.2",
     "is-glob": "^4.0.0",
-    "joi": "^13.1.2",
+    "joi": "^12.0.0",
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.5"
   },
@@ -66,7 +66,7 @@
     "hooks": {
       "commit-msg": "commitlint -e $GIT_PARAMS",
       "pre-commit": "run-s lint:*",
-      "pre-push": "npm-run-all test:coverage lint:* check:*"
+      "pre-push": "npm-run-all lint:* test:coverage check:*"
     }
   },
   "scripts": {
