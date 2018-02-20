@@ -1,0 +1,19 @@
+---
+sudo: false
+language: node_js
+
+node_js:
+  - '6'
+
+# Enforce commit convention by linting on CI with `commitlint`.
+# See http://marionebl.github.io/commitlint/#/guides-ci-setup
+script:
+  - >
+    commitlint-travis &&
+    run-p lint:* &&
+    npm run test:unit &&
+    npm run test:integration &&
+    npm run test:functional &&
+    npm run test:acceptance &&
+    npm run test:coverage &&
+    run-p check:*
