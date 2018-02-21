@@ -70,8 +70,7 @@
     }
   },
   "scripts": {
-    "semantic-commit": "git-cz",
-    "semantic-commit-retry": "npm run semantic-commit -- --retry",
+    "semantic-commit": "git cz -S",
     "dev:ide": "atom --disable-gpu -d .",
     "dev:watch": "chokidar 'bin/**/*.js' 'lib/**/*.js' 'test/**/*.js' '.nycrc.json' 'test/mocha.opts' -c 'reset && npm run test:coverage; npm run report:complexity'",
     "check:coverage": "nyc check-coverage",
