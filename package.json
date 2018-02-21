@@ -6,6 +6,12 @@
   "author": "Carlos García <cgalvarez.engineer@gmail.com>",
   "license": "MIT",
   "main": "lib/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "bin": {
     "atom-coverage": "bin/atom-coverage.js"
   },
@@ -71,6 +77,7 @@
   },
   "scripts": {
     "semantic-commit": "git cz -S",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "dev:ide": "atom --disable-gpu -d .",
     "dev:watch": "chokidar 'bin/**/*.js' 'lib/**/*.js' 'test/**/*.js' '.nycrc.json' 'test/mocha.opts' -c 'reset && npm run test:coverage; npm run report:complexity'",
     "check:coverage": "nyc check-coverage",
