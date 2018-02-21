@@ -66,7 +66,7 @@ const restoreSandbox = () => mock.sandbox.restore(spy, stub);
 const mockConfigFile = (
   file = data.config.atomCoverage.filenames.default,
   format = 'JSON',
-  customOptions = _.cloneDeep(data.config.atomCoverage.defaults),
+  customOptions = _.cloneDeep(data.config.atomCoverage.defaults)
 ) => {
   const configFiles = {};
   const options = _.defaultsDeep({}, customOptions);
@@ -213,7 +213,7 @@ describe('UNIT TESTS: manager', () => {
       stub.globSync.onFirstCall().returns([expectedSourcesRoot]);
       const expectedSettings = _.defaultsDeep(
         { sourcesRoot: expectedSourcesRoot },
-        data.config.atomCoverage.defaults,
+        data.config.atomCoverage.defaults
       );
       // 4. Mock filesystem (if read/write operations present) ~> sources root.
       mock.fs.localFiles(_.set({}, join(cwd, sourcesRoot), {}));
@@ -258,7 +258,7 @@ describe('UNIT TESTS: manager', () => {
       const customSourcesRoot = 'other/';
       manager.config = _.defaultsDeep(
         { sourcesRoot: customSourcesRoot },
-        data.config.atomCoverage.defaults,
+        data.config.atomCoverage.defaults
       );
       expect(manager).to.have.nested.property('config.sourcesRoot', customSourcesRoot);
       manager.initConfig();
@@ -282,7 +282,7 @@ describe('UNIT TESTS: manager', () => {
         // 3. Stub/spy same module functions/methods called by the UUT.
         const expectedConfig = _.defaultsDeep(
           { sourcesRoot: 'lib/' },
-          data.config.atomCoverage.defaults,
+          data.config.atomCoverage.defaults
         );
         expectedConfig[type] = toTest.unsupported;
         manager.config = expectedConfig;
@@ -300,7 +300,7 @@ describe('UNIT TESTS: manager', () => {
           // 3. Stub/spy same module functions/methods called by the UUT.
           const expectedConfig = _.defaultsDeep(
             { sourcesRoot: 'lib/' },
-            data.config.atomCoverage.defaults,
+            data.config.atomCoverage.defaults
           );
           manager.config = expectedConfig;
           // 4. Mock filesystem (if read/write operations present) ~> NONE
@@ -326,7 +326,7 @@ describe('UNIT TESTS: manager', () => {
       const expectedInstrumentedPath = join(defaultNycOutputFolder, '.instrumented');
       manager.config = _.defaultsDeep(
         { sourcesRoot: 'lib/' },
-        data.config.atomCoverage.defaults,
+        data.config.atomCoverage.defaults
       );
       // 4. Mock filesystem (if read/write operations present) ~> sources root.
       // 5. Test!
@@ -345,7 +345,7 @@ describe('UNIT TESTS: manager', () => {
       stub.nyc.getOutputFolder.onFirstCall().returns(defaultNycOutputFolder);
       manager.config = _.defaultsDeep(
         { sourcesRoot: 'lib/' },
-        data.config.atomCoverage.defaults,
+        data.config.atomCoverage.defaults
       );
       // 4. Mock filesystem (if read/write operations present) ~> sources root.
       // 5. Test!
@@ -364,7 +364,7 @@ describe('UNIT TESTS: manager', () => {
           sourcesRoot: 'lib/',
           instrumentedPath: '.instrumented',
         },
-        data.config.atomCoverage.defaults,
+        data.config.atomCoverage.defaults
       );
       manager.config = _.cloneDeep(expectedConfig);
       // 4. Mock filesystem (if read/write operations present) ~> sources root.
@@ -385,7 +385,7 @@ describe('UNIT TESTS: manager', () => {
           sourcesRoot: 'lib/',
           instrumentedPath: '.instrumented',
         },
-        data.config.atomCoverage.defaults,
+        data.config.atomCoverage.defaults
       );
       manager.config = _.cloneDeep(expectedConfig);
       // 4. Mock filesystem (if read/write operations present) ~> sources root.
@@ -407,7 +407,7 @@ describe('UNIT TESTS: manager', () => {
           sourcesRoot: 'lib/',
           instrumentedPath: '.instrumented',
         },
-        data.config.atomCoverage.defaults,
+        data.config.atomCoverage.defaults
       );
       manager.config = _.cloneDeep(expectedConfig);
       // 4. Mock filesystem (if read/write operations present) ~> sources root.
