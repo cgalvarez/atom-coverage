@@ -1,7 +1,0 @@
----
-language: node_js
-
-# Enforce commit convention by lintint on CI with `commitlint`.
-# See http://marionebl.github.io/commitlint/#/guides-ci-setup
-script:
-  - commitlint-travis

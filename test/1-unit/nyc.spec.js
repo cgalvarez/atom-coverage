@@ -450,7 +450,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         .and.have.been.calledWith(
           manager.config.sourcesRoot,
           manager.config.instrumentedPath,
-          manager.requireRoot,
+          manager.requireRoot
         )
         .and.have.returned(globsToCover);
       expect(stub.testquire).to.have.been.calledOnce

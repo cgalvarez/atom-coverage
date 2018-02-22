@@ -1,0 +1,23 @@
+{
+  "ignore": [
+    "**/node_modules/**",
+    ".reports/**"
+  ],
+  "test": [
+    "test/**"
+  ],
+  "dependencies": {
+    "mute": [
+      "commitizen",
+      "joi"
+    ]
+  },
+  "critics": {
+    "lint": {
+      "engine": "eslint"
+    },
+    "wc": {
+      "limit": 10000
+    }
+  }
+}

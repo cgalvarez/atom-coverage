@@ -2,6 +2,8 @@
 plugins:
   - chai-expect
 rules:
+  # node v6 does not support comma dangle on function parameters list split.
+  comma-dangle: 0
   import/no-dynamic-require: 0
   no-unused-expressions: 0
   # Rules of plugin `chai-expect`.
@@ -11,8 +13,8 @@ rules:
 globals:
   expect: false
 env:
-    atomtest: true
-    browser: true
-    node: true
-    mocha: true
-    shared-node-browser: true
+  atomtest: true
+  browser: true
+  node: true
+  mocha: true
+  shared-node-browser: true
