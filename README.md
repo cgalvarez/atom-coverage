@@ -9,6 +9,9 @@
   <a href="http://semver.org/spec/v2.0.0.html">
     <img src="http://img.shields.io/SemVer/2.0.0.png" alt="Semantic Versioning 2.0.0">
   </a>
+  <a href="https://travis-ci.org/cgalvarez/atom-coverage">
+    <img src="https://travis-ci.org/cgalvarez/atom-coverage.svg?branch=master" alt="Build Status" />
+  </a>
 </p>
 <p align="center">
   <strong>VCS</strong>
