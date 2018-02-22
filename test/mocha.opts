@@ -3,3 +3,4 @@
 --check-leaks
 --globals __coverage__,child_process,AtomMocha,AtomCoverage
 --require ./helpers/fix.js
+--timeout 5000
