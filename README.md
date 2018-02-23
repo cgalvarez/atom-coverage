@@ -30,16 +30,6 @@
   </a>
 </p>
 <p align="center">
-  <strong>LEGAL</strong>
-  <br />
-  <a href="https://opensource.org/">
-    <img src="https://img.shields.io/badge/Open%20Source-♥-ff69b4.svg?style=flat" alt="Love open source">
-  </a>
-  <a href="https://opensource.org/licenses/MIT">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="MIT license">
-  </a>
-</p>
-<p align="center">
   <strong>SECURITY</strong>
   <br />
   <a href="https://greenkeeper.io/">
@@ -63,6 +53,19 @@
   </a>
   <a href="https://www.bithound.io/github/cgalvarez/atom-coverage">
     <img src="https://www.bithound.io/github/cgalvarez/atom-coverage/badges/code.svg" alt="bitHound Code">
+  </a>
+  <a href="https://codecov.io/gh/cgalvarez/atom-coverage">
+    <img src="https://codecov.io/gh/cgalvarez/atom-coverage/branch/master/graph/badge.svg" alt="codecov" />
+</a>
+</p>
+<p align="center">
+  <strong>LEGAL</strong>
+  <br />
+  <a href="https://opensource.org/">
+    <img src="https://img.shields.io/badge/Open%20Source-♥-ff69b4.svg?style=flat" alt="Love open source">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="MIT license">
   </a>
 </p>
 
