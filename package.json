@@ -69,7 +69,10 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     },
-    "reportsFolder": ".reports"
+    "output": {
+      "coverage": "coverage",
+      "reports": ".reports"
+    }
   },
   "husky": {
     "hooks": {
@@ -92,18 +95,19 @@
     "test:functional": "npm run test:scoped -- ./3-functional/**/*.{spec,test}.js",
     "test:acceptance": "npm run test:scoped -- ./4-acceptance/**/*.{spec,test}.js",
     "test:watch": "cd test && mocha --watch ./**/*.{spec,test}.js --opts ./mocha.opts",
-    "test:coverage": "rm -rf $npm_package_config_reportsFolder/* && cross-env COVERAGE=true nyc npm test",
-    "test:coverage:clean": "rm -rf $npm_package_config_reportsFolder/*",
+    "test:coverage": "run-s test:coverage:clean report:clean && cross-env COVERAGE=true nyc npm test",
+    "test:coverage:clean": "rm -rf $npm_package_config_output_coverage/*",
     "test:coverage:unit": "npm run test:coverage:clean && cross-env COVERAGE=true nyc npm run test:unit",
     "test:coverage:integration": "npm run test:coverage:clean && cross-env COVERAGE=true nyc npm run test:integration",
     "test:coverage:functional": "npm run test:coverage:clean && cross-env COVERAGE=true nyc npm run test:functional",
     "test:coverage:acceptance": "npm run test:coverage:clean && cross-env COVERAGE=true nyc npm run test:acceptance",
     "test:coverage:watch": "npm run test:coverage:clean && chokidar 'lib/**/*.js' 'test/**/*.js' -c 'reset && cross-env COVERAGE=true npm run test:coverage'",
-    "report:complexity": "es6-plato -q -r -d $npm_package_config_reportsFolder/complexity lib bin",
+    "report:clean": "rm -rf $npm_package_config_output_reports",
+    "report:complexity": "es6-plato -q -r -d $npm_package_config_output_reports/complexity lib bin",
     "report:open": "run-p report:open:*",
-    "report:open:complexity": "xdg-open $npm_package_config_reportsFolder/complexity/index.html",
-    "report:open:coverage": "xdg-open $npm_package_config_reportsFolder/lcov-report/index.html",
-    "report:open:tests": "xdg-open $npm_package_config_reportsFolder/test/mochawesome.html"
+    "report:open:complexity": "xdg-open $npm_package_config_output_coverage/complexity/index.html",
+    "report:open:coverage": "xdg-open $npm_package_config_output_coverage/lcov-report/index.html",
+    "report:open:tests": "xdg-open $npm_package_config_output_coverage/test/mochawesome.html"
   },
   "keywords": [
     "atom",

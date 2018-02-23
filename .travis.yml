@@ -50,15 +50,27 @@ jobs:
   # [!] Runs: Only once after successful tests.
   - stage: coverage
     node_js: lts/*
+    before_script:
+    # Fetch CodeClimate test-reporter and pre-setup.
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - ./cc-test-reporter before-build
+    # Install `codecov` script globally.
+    - yarn global add codecov
     install:
-    - >
-      yarn global add codecov &&
-      yarn install --ignore-engines
+    - yarn install --ignore-engines
     script:
-      - >
-        npm run test:coverage &&
-        nyc check-coverage &&
-        codecov --file=.reports/lcov.info
+    - >
+      npm run test:coverage &&
+      nyc check-coverage
+    # Upload coverage info to cloud services and enforce required thresholds.
+    # CodeClimate expect to find the `lcov.info` under `coverage/`
+    # See https://github.com/codeclimate/test-reporter/blob/master/formatters/lcov/lcov.go#L16
+    after_script:
+    - >
+      ./cc-test-reporter after-build --debug --coverage-input-type lcov --exit-code $TRAVIS_TEST_RESULT &&
+      codecov --file=coverage/lcov.info &&
+      nyc check-coverage
   # Stage used for deploying to NPM with `semantic-release`.
   #
   # [!] Runs: Only once on successful build triggered
@@ -83,6 +95,8 @@ env:
   - secure: F1Qg9N7HdYf2LQvglidjIOCEsenhGNKe87wEBc70w8HEx42fXA1fqrWlpxGjUMRbYPWOpN2ZSuXuAAmhhK8zfCofq4eTttoPFdLCivylTLcrNlRRqMN/Zg/ktf3JMOYpvaXQkVsxTJ1bfUkK0Tzl2lsrKG6iKmM6Gs40saD7s/gEWXkecBUEUIMO11RBwZrnmDtOwEzzLqzTinnewtEsoh7OfQsU+3qPJ/CxG3uYc1DRpu2j9IA/vwR8B0tt6MjSXQ/Ei3Nf1ary5maNwCl1E2ekr+nDabrjMtdnAhRkwPx5EVTOF5J1hIwMduHM7wzH8vWdnXp1K5l/K0dxY5OS4byWsBbDaHa2Evg+QqzYDRFZFSd5YldUwhyPWkc2HZVynRfbnJu37JIXFdbF9GZUH9wg6XZVwD74Q0tXZHlJ5/G6F7Xacpwf7c3GRKU8dWH/bCEMuvE0H7HifHDOmr2DdYEDnd3TEHIwRRfnpVX867j7S+liqFa88QOIIonHr0xd4TRDHjhJi7J3xC8tRHAOaqx5ygsfdWm7EfUGPSnhk6ENZYWE8TwlX9l2VZRvXZDAQ81DTIuhUkZgj8peclKLJiJ5mMrSOa50FNeQEIeZmTV8kmQkhxDwfCwWKqTqwsw+CLcGu7qeMDcrkBubFhNDYg/M6fOLWcf4jevJ6eTwW84=
   # CODECOV_TOKEN
   - secure: c9oHFPNnOz/YUO2c5aBL73mgoRNf/QWvqIYGoNRxt2zk+OsfSvlEN/33tZAgODBhzGYDrBPWuUaNKl9osiZ4Ek1OEGi25bORNdN7cA/GNt7FlQdyC0LHj31Oaht7hqtxo9FUmZWIDL7Z3yO44fMB1kiom07zOVUsvNHV+aI/aD8yxUvOOjhKdH8ZPfs98D9ZC8+Xm34QAdjiuo7gWH6VyMfWKm1JF4Xc81o6hugmMgXshFAVCtemnjFEdzXMXQl1O/bwmAVF8BHzNx1qOr7iI8TN59Fbt2alWApm9qrJVxXsxaKUBifMsV8Av3tv61mdbIKnCg4lTs5rhUwzuF4SMTGs8dpn9w/jB3AyNGgw6nK0AleVleTrwlY6zrQubejIBonBt+8LQ1WQb2KG8nlMu+WJjByu+muYgh1uU2AOvK+/0wK8n6QtlyPr24M8Fh9UCm6oc8Ao2WRC6awFj/jmNuEfJYGoYsPe5wIOlSwRGRswR48/NeJwkPhfpY972wbnHB5tUQUjR6CrULaOxsuL72mh7gqvek7fdhJQw4hkE8KEZ8qNGKj1dOC2oSDiViS0CqDKd91tVVVgbRDh1Mjm5807hXOaE1ZGT+5zX/ntcKd8D5J/e6yVpTCLyrhNqAxUp/FAfnuE6pMXsnu/+KANvF/JGCsoiJNBIECfo07bF3M=
+  # CC_TEST_REPORTER_ID: https://docs.codeclimate.com/v1.0/docs/travis-ci-test-coverage
+  - secure: IDuRpDA8D29/R9q5VKhNmv1gT2vcKhnRBbmlYozUSJL5q5xygwJOJLBIeqF+ZH0nfBxPmPlhy+8nyWSVDrSgUBWNWThIwHbzt2iAJZM2pUcLJ/YsDfSHtyXzHwU7PQCZfTj3eB1A0Crk9CXcGHghi/qn8NELlYcPL7bIpRF6bnejzFdThUEhrblOchFfkoOw+AlKrappZYe/lJv+gNQr7mn9JFm9hEAhpejS/uh3gN34Na3xbXzeHVyn7joJjKSNiNNzwe/oFklwKpLdu5/u3IITclgFNxVGMXj8BJC6SPYG1QY642aEW2z35pu8EOVLBVM941HZnw6AUtLocRT1lEPBrsCi6ZRHG4pGROcuBHyHLjGtkAw91xt46WnbA6jvTzk8GChnzJGhDZsTdTY01lJI3Fmd2U3QCKfzzfequRsjahEkr9kXrhmVXqcsajUGbtWryjtuCjJPLZyOn2RVdpmjrvi1A10bVkZtNqn6b4Nw6iBEcqZc2yrwRiMY2+HEaT0/uA5yEk56UnDbn1vFdey5O99oh1Le9QDSV437wPGLb+/8j30wW+Vc7Vr0ATI01VwJi/2g0mN14yfnJb+K6UxZKsAmslKCg/tw5HNcVuHfkCn5NG5UgfLZFrtnEdNVroJ7ITd6lCybeqwNRl2+kpjCzo05kHHUYnoXG15hgbk=
   # env vars for `greenkeeper-lockfiles`
   - GK_LOCK_YARN_OPTS=--ignore-engines
 notifications:
