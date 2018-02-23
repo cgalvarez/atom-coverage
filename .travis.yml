@@ -1,19 +1,23 @@
 sudo: false
 language: node_js
-node_js:
-- '8'
-- '6'
 cache:
   yarn: true
   directories:
   - node_modules
+# Disable `git clone` commit depth.
+# See https://docs.travis-ci.com/user/customizing-the-build/#git-clone-depth
+git:
+  depth: false
 stages:
 - test
-- name: release
-  if: branch = master
+- coverage
+- release
+# Defaults for `test` stage.
 install:
 - yarn install --ignore-engines
 script:
+# Enforce commit convention by linting on CI with `commitlint`.
+# See http://marionebl.github.io/commitlint/#/guides-ci-setup
 - >
   echo "Running tests against $(node -v) ..." &&
   commitlint-travis &&
@@ -21,13 +25,36 @@ script:
   npm run test:unit &&
   npm run test:integration &&
   npm run test:functional &&
-  npm run test:acceptance &&
-  npm run test:coverage &&
-  run-p check:*
-
+  npm run test:acceptance
+# Matrix expansion for `test` stage.
+node_js:
+- 'node'
+- 'lts/*'
+- '8'
+- '7'
+- '6'
 jobs:
   include:
+  # Stage used for sending coverage info to cloud providers.
+  #
+  # [!] Runs: Only once after successful tests.
+  - stage: coverage
+    node_js: lts/*
+    install:
+    - >
+      yarn global add codecov &&
+      yarn install --ignore-engines
+    script:
+      - >
+        npm run test:coverage &&
+        nyc check-coverage &&
+        codecov --file=.reports/lcov.info
+  # Stage used for deploying to NPM with `semantic-release`.
+  #
+  # [!] Runs: Only once on successful build triggered
+  #           because of a push to the `master` branch.
   - stage: release
+    if: branch = master
     node_js: lts/*
     script: skip
     deploy:
@@ -35,7 +62,14 @@ jobs:
       skip_cleanup: true
       script:
       - semantic-release
+# Encrypt API tokens: `travis encrypt YOUR_AUTH_TOKEN --add`
+# See https://docs.travis-ci.com/user/encryption-keys/
+# See https://docs.travis-ci.com/user/deployment/npm/
 env:
   global:
+  # GH_TOKEN: https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
   - secure: cDpIk0t539zEKBy4Pcg+yLqt7nmfte+cPNPuANPZ480vX0DTRjGKL7yphRE7VNKcfG97OlQIdHhkdPu4DS72UJqCu7Dk3gJPDcYnyb9Ld5IImPh58EoB+aBeMxEr14M6DXmi9kEt5GAqX9/BWbbihGYLzNRatc4FQt1e/Kapq0OBlGcgQgCF5DuS2AgzbsdrAs/xTijCc69bEgmAXou1zlmaINLUM4g1GLOG3W3CzvgDnG2oFn1/zP/02dVxNMYoUf1ujcm3s+iCqDkzRqD/T3URC1vhhZUOlt+x1j263NSzrXNTe6zmwys/WjHqjjwrYoZRwmdAnIscdOP40HjEp/HVosoqT6HaAMDka+7IUP50xfPMOiblhw8E66u9lQ3kDoepYLpjpajYDBph/uGGBYwJY/BkoXB9zancMwt1Z3tp5yFmg2+ZPfmN0dIeq+gGfHwAc36v4aHaC/QrIpzT4WhvQDvrKfL84WTFKwc2bfxqxS8SfAeILZ+s5YUXNHLr1t39lrIz6klzuhk5CbJoQhi1B0A6ZLStQTg2skENpmauhjDGdd5sj8XlzNJ6XRkiY3hYt9qjQzGvRh9ifishTWIE9RmHG5W05bVXMUHt6FBNpj6r1aN4EdIR0f6rNr70fKQJltaYEYgxmvDdQ3tJMoacFcWo87mzzdxcYWPSJw0=
+  # NPM_TOKEN: https://docs.npmjs.com/getting-started/working_with_tokens
   - secure: F1Qg9N7HdYf2LQvglidjIOCEsenhGNKe87wEBc70w8HEx42fXA1fqrWlpxGjUMRbYPWOpN2ZSuXuAAmhhK8zfCofq4eTttoPFdLCivylTLcrNlRRqMN/Zg/ktf3JMOYpvaXQkVsxTJ1bfUkK0Tzl2lsrKG6iKmM6Gs40saD7s/gEWXkecBUEUIMO11RBwZrnmDtOwEzzLqzTinnewtEsoh7OfQsU+3qPJ/CxG3uYc1DRpu2j9IA/vwR8B0tt6MjSXQ/Ei3Nf1ary5maNwCl1E2ekr+nDabrjMtdnAhRkwPx5EVTOF5J1hIwMduHM7wzH8vWdnXp1K5l/K0dxY5OS4byWsBbDaHa2Evg+QqzYDRFZFSd5YldUwhyPWkc2HZVynRfbnJu37JIXFdbF9GZUH9wg6XZVwD74Q0tXZHlJ5/G6F7Xacpwf7c3GRKU8dWH/bCEMuvE0H7HifHDOmr2DdYEDnd3TEHIwRRfnpVX867j7S+liqFa88QOIIonHr0xd4TRDHjhJi7J3xC8tRHAOaqx5ygsfdWm7EfUGPSnhk6ENZYWE8TwlX9l2VZRvXZDAQ81DTIuhUkZgj8peclKLJiJ5mMrSOa50FNeQEIeZmTV8kmQkhxDwfCwWKqTqwsw+CLcGu7qeMDcrkBubFhNDYg/M6fOLWcf4jevJ6eTwW84=
+  # CODECOV_TOKEN
+  - secure: c9oHFPNnOz/YUO2c5aBL73mgoRNf/QWvqIYGoNRxt2zk+OsfSvlEN/33tZAgODBhzGYDrBPWuUaNKl9osiZ4Ek1OEGi25bORNdN7cA/GNt7FlQdyC0LHj31Oaht7hqtxo9FUmZWIDL7Z3yO44fMB1kiom07zOVUsvNHV+aI/aD8yxUvOOjhKdH8ZPfs98D9ZC8+Xm34QAdjiuo7gWH6VyMfWKm1JF4Xc81o6hugmMgXshFAVCtemnjFEdzXMXQl1O/bwmAVF8BHzNx1qOr7iI8TN59Fbt2alWApm9qrJVxXsxaKUBifMsV8Av3tv61mdbIKnCg4lTs5rhUwzuF4SMTGs8dpn9w/jB3AyNGgw6nK0AleVleTrwlY6zrQubejIBonBt+8LQ1WQb2KG8nlMu+WJjByu+muYgh1uU2AOvK+/0wK8n6QtlyPr24M8Fh9UCm6oc8Ao2WRC6awFj/jmNuEfJYGoYsPe5wIOlSwRGRswR48/NeJwkPhfpY972wbnHB5tUQUjR6CrULaOxsuL72mh7gqvek7fdhJQw4hkE8KEZ8qNGKj1dOC2oSDiViS0CqDKd91tVVVgbRDh1Mjm5807hXOaE1ZGT+5zX/ntcKd8D5J/e6yVpTCLyrhNqAxUp/FAfnuE6pMXsnu/+KANvF/JGCsoiJNBIECfo07bF3M=
