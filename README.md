@@ -56,7 +56,10 @@
   </a>
   <a href="https://codecov.io/gh/cgalvarez/atom-coverage">
     <img src="https://codecov.io/gh/cgalvarez/atom-coverage/branch/master/graph/badge.svg" alt="codecov" />
-</a>
+  </a>
+  <a href="https://inch-ci.org/github/cgalvarez/atom-coverage">
+    <img src="http://inch-ci.org/github/cgalvarez/atom-coverage.svg?branch=master&style=shields" alt="InchCI docs coverage" />
+  </a>
 </p>
 <p align="center">
   <strong>LEGAL</strong>
