@@ -4,6 +4,11 @@
 </h1>
 <h3 align="center">Add code coverage to your ES6 Atom package</h3>
 <p align="center">
+  <a href="https://nodei.co/npm/atom-coverage/">
+    <img src="https://nodei.co/npm/atom-coverage.png">
+  </a>
+</p>
+<p align="center">
   <strong>PACKAGE</strong>
   <br />
   <a href="http://semver.org/spec/v2.0.0.html">
