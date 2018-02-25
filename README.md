@@ -76,6 +76,19 @@
       alt="bitHound Code" />
   </a>
   <br />
+  <a href="https://codeclimate.com/github/cgalvarez/atom-coverage">
+    <img src="https://codeclimate.com/github/cgalvarez/atom-coverage/badges/issue_count.svg"
+      alt="CodeClimate issue count" />
+  </a>
+  <a href="https://codeclimate.com/github/cgalvarez/atom-coverage/maintainability">
+    <img src="https://api.codeclimate.com/v1/badges/dd177b97982f224495c4/maintainability"
+      alt="CodeClimate maintainability score" />
+  </a>
+  <br />
+  <a href="https://codeclimate.com/github/cgalvarez/atom-coverage/test_coverage">
+    <img src="https://api.codeclimate.com/v1/badges/dd177b97982f224495c4/test_coverage"
+      alt="CodeClimate test coverage " />
+  </a>
   <a href="https://codecov.io/gh/cgalvarez/atom-coverage">
     <img src="https://codecov.io/gh/cgalvarez/atom-coverage/branch/master/graph/badge.svg"
       alt="codecov" />
