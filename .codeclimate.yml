@@ -1,0 +1,32 @@
+---
+# CodeClimate config file configuration: https://docs.codeclimate.com/docs/advanced-configuration
+version: "2"
+plugins:
+  # ESLint: https://docs.codeclimate.com/docs/eslint
+  eslint:
+    enabled: true
+    channel: "eslint-4"
+    checks:
+      complexity:
+        enabled: true
+    config:
+      extensions:
+      - .es6
+      - .js
+  markdownlint:
+    enabled: true
+    exclude_fingerprints:
+    # Unavoidable lengthy lines.
+    - 184efb4b1212345dcbe0bf36064230f4
+    - c03f7976bb3e27eb1e08b08d0475a15b
+    # Trailing question mark in heading.
+    - 299b8b7c47d3644f029ad29866c9e5b0
+exclude_patterns:
+- ".git/**/*"
+- ".nyc_output/**/*"
+- ".reports/**/*"
+- "coverage/**/*"
+- "node_modules/**/*"
+# `eslint` when exec by CodeClimate doesn't use the specific config
+# file at `test/.eslintrc.yaml`, that's why we exclude it here.
+- "test/**/*"
