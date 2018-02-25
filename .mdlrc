@@ -1,0 +1,11 @@
+# Tutorial:
+#  - https://github.com/markdownlint/markdownlint/blob/master/docs/configuration.md
+#  - https://updownpress.github.io/markdown-lint
+# Rules: https://github.com/markdownlint/markdownlint/blob/v0.4.0/docs/RULES.md
+# Examples:
+#  - https://github.com/Chalarangelo/30-seconds-of-code/blob/master/.mdlrc
+#  - https://github.com/coel-lang/coel/blob/master/.mdlrc
+#  - https://github.com/elerch/vcsh_mdlrc/blob/master/.mdl.rb
+rules "~MD002", # First header should be a top level header ~> Using HTML
+      "~MD041"  # First line in file should be a top level header
+style ".mdlrc.style.rb"
