@@ -1,0 +1,9 @@
+# Unignore hidden files/folders (need to be explicitly passed as args).
+# See https://github.com/eslint/eslint/pull/6844#issuecomment-239597082
+!.*
+
+# Skip these ones.
+.git/**/*
+.reports/**/*
+coverage/**/*
+node_modules/**/*
