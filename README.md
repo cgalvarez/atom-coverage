@@ -13,7 +13,7 @@
       alt="Semantic Versioning 2.0.0" />
   </a>
   <a href="https://travis-ci.org/cgalvarez/atom-coverage">
-    <img src="https://travis-ci.org/cgalvarez/atom-coverage.svg?branch=master"
+    <img src="https://img.shields.io/travis/cgalvarez/atom-coverage/master.svg?label=TravisCI%20build&logo=travis"
       alt="Build Status" />
   </a>
 </p>
