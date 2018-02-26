@@ -4,5 +4,7 @@
     node: true
     browser: true
     shared-node-browser: true
+  plugins:
+  - "json"
   rules:
     global-require: off
