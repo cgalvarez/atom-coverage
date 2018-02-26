@@ -42,13 +42,13 @@ describe('UNIT TESTS: babel transpiler', () => {
     it('should parse contents of config file', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       const utilStubs = {
-        readConfig: () => _.cloneDeep(data.config.babel.defaults),
-        findConfigFile: () => defaultConfigFile,
+        readConfig: () => {
+          babel.config.settings = _.cloneDeep(data.config.babel.defaults);
+        },
       };
       spy = {
         util: {
           readConfig: sinon.spy(utilStubs.readConfig),
-          findConfigFile: sinon.spy(utilStubs.findConfigFile),
         },
       };
       requireUUT(undefined, { '../util': spy.util });
@@ -63,20 +63,19 @@ describe('UNIT TESTS: babel transpiler', () => {
         .and.have.been.calledWith()
         .and.have.returned()
         .and.have.not.thrown();
-      expect(spy.util.findConfigFile).to.have.been.calledOnce;
       expect(spy.util.readConfig).to.have.been.calledOnce;
     });
 
     it('should set empty settings if no config file found', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       const utilStubs = {
-        readConfig: () => undefined,
-        findConfigFile: () => undefined,
+        readConfig: () => {
+          babel.config.settings = {};
+        },
       };
       spy = {
         util: {
           readConfig: sinon.spy(utilStubs.readConfig),
-          findConfigFile: sinon.spy(utilStubs.findConfigFile),
         },
       };
       requireUUT(undefined, { '../util': spy.util });
@@ -90,8 +89,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         .and.have.been.calledWith()
         .and.have.returned()
         .and.have.not.thrown();
-      expect(spy.util.findConfigFile).to.have.been.calledOnce;
-      expect(spy.util.readConfig).to.have.not.been.called;
+      expect(spy.util.readConfig).to.have.been.calledOnce;
     });
   });
 

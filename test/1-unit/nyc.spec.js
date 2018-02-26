@@ -90,13 +90,13 @@ describe('UNIT TESTS: nyc instrumenter', () => {
     it('should parse contents of config file', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       const utilStubs = {
-        readConfig: () => _.cloneDeep(data.config.nyc.defaults),
-        findConfigFile: () => data.config.nyc.filenames.default,
+        readConfig: () => {
+          nyc.config.settings = _.cloneDeep(data.config.nyc.defaults);
+        },
       };
       spy = {
         util: {
           readConfig: sinon.spy(utilStubs.readConfig),
-          findConfigFile: sinon.spy(utilStubs.findConfigFile),
         },
       };
       requireUUT(undefined, { '../util': spy.util });
@@ -112,20 +112,19 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         .and.have.been.calledWith()
         .and.have.returned()
         .and.have.not.thrown();
-      expect(spy.util.findConfigFile).to.have.been.calledOnce;
       expect(spy.util.readConfig).to.have.been.calledOnce;
     });
 
     it('should set empty settings if no config file found', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       const utilStubs = {
-        readConfig: () => undefined,
-        findConfigFile: () => undefined,
+        readConfig: () => {
+          nyc.config.settings = {};
+        },
       };
       spy = {
         util: {
           readConfig: sinon.spy(utilStubs.readConfig),
-          findConfigFile: sinon.spy(utilStubs.findConfigFile),
         },
       };
       requireUUT(undefined, { '../util': spy.util });
@@ -139,8 +138,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         .and.have.been.calledWith()
         .and.have.returned()
         .and.have.not.thrown();
-      expect(spy.util.findConfigFile).to.have.been.calledOnce;
-      expect(spy.util.readConfig).to.have.not.been.called;
+      expect(spy.util.readConfig).to.have.been.calledOnce;
     });
   });
 
@@ -153,10 +151,24 @@ describe('UNIT TESTS: nyc instrumenter', () => {
 
     afterEach(restoreSandbox);
 
-    it('should create config file', () => {
+    it('should save config file', () => {
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       mock.fs.localFiles({});
       nyc.config.filepath = expectedFilepath;
+      nyc.config.settings = _.cloneDeep(data.config.nyc.defaults);
+      // 5. Test!
+      nyc.saveConfig();
+      // 6. Assertions.
+      expect(spy.saveConfig).to.have.been.calledOnce
+        .and.returned().and.calledWith().and.have.not.thrown();
+      expect(existsSync(expectedFilepath)).to.be.a('boolean').that.equals(true);
+      expect(readJSONSync(expectedFilepath)).to.be.an('object')
+        .that.deep.equals(data.config.nyc.defaults);
+    });
+
+    it('should create default config file if none present', () => {
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      mock.fs.localFiles({});
       nyc.config.settings = _.cloneDeep(data.config.nyc.defaults);
       // 5. Test!
       nyc.saveConfig();
