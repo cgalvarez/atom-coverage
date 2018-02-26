@@ -12,9 +12,7 @@ const setupNpmConfig = () => {
   }
 
   const packageJSONPath = join(process.env.INIT_CWD, 'package.json');
-  if (!existsSync(packageJSONPath)) {
-    return;
-  }
+  if (!existsSync(packageJSONPath)) return;
   const packageJSON = readJSONSync(packageJSONPath);
 
   let modified = false;
@@ -25,9 +23,7 @@ const setupNpmConfig = () => {
   };
   _.forEach(scripts, (cmd, name) => {
     _.update(packageJSON, `scripts.${name}`, (v) => {
-      if (v) {
-        return v;
-      }
+      if (v) return v;
       modified = true;
       return cmd;
     });
