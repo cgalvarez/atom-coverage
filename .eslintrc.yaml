@@ -4,6 +4,7 @@
     - filenames
     - json
     - lodash
+    - smells
     - you-dont-need-lodash-underscore
   extends:
     - airbnb-base
@@ -35,11 +36,29 @@
     lodash/prefer-some: off
     lodash/prefer-startswith: off
     lodash/prefer-times: off
+    # Rules of plugin `smells`
+    smells/no-switch: off
+    smells/no-complex-switch-case: error
+    smells/no-setinterval: error
+    smells/no-this-assign: error
+    smells/no-complex-string-concat: error
+    smells/no-complex-chaining: error
   overrides:
-    # Rules of plugin `filenames` ~> tests/binaries export nothing!
+    - files:
+        - lib/manager.js
+        - test/helpers/fix.js
+      rules:
+        # Rules of plugin `smells` ~> Joi is meant to be chained!
+        smells/no-complex-chaining: off
+    - files:
+        - test/**/*.spec.js
+      rules:
+        # Rules of plugin `smells` ~> mocha is meant to be chained!
+        smells/no-complex-chaining: off
     - files:
         - bin/*.js
-        - test/**/*.spec.js"
+        - test/**/*.spec.js
       rules:
+        # Rules of plugin `filenames` ~> tests/binaries export nothing!
         filenames/match-regex: 0
         filenames/match-exported: off

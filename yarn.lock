@@ -1380,6 +1380,10 @@ eslint-plugin-lodash@^2.6.1:
   dependencies:
     lodash "~4.17.0"
 
+eslint-plugin-smells@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-smells/-/eslint-plugin-smells-1.0.1.tgz#87fdb7324a79689d5c1b11224ae94f32f5399858"
+
 eslint-plugin-you-dont-need-lodash-underscore@^6.3.1:
   version "6.3.1"
   resolved "https://registry.yarnpkg.com/eslint-plugin-you-dont-need-lodash-underscore/-/eslint-plugin-you-dont-need-lodash-underscore-6.3.1.tgz#652ddaf98a5cebb733d0ae9ae7207cf14d3837b6"
