@@ -1,5 +1,14 @@
+# Hidden folders.
+.nyc_output/
 .reports/
+
+# Folders.
 coverage/
 node_modules/
+
+# Hidden files.
 .inch.config.json
+
+# Files.
 docs.json
+npm-debug.log
