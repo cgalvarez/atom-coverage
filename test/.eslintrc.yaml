@@ -1,19 +1,41 @@
 ---
 plugins:
   - chai-expect
+  - chai-friendly
+  - mocha
 rules:
   # node v6 does not support comma dangle on function parameters list split.
   comma-dangle: 0
   import/no-dynamic-require: 0
   no-unused-expressions: 0
+  # Rules of plugin `chai-friendly`.
+  chai-friendly/no-unused-expressions: error
   # Rules of plugin `chai-expect`.
   chai-expect/missing-assertion: error
   chai-expect/no-inner-compare: error
   chai-expect/terminating-properties: error
-  # Rules of plugin `eslint-plugin-filenames`.
+  # Rules of plugin `filenames`.
   filenames/match-regex: off
   filenames/match-exported: off
   filenames/no-index: off
+  # Rules of plugin `mocha`
+  mocha/handle-done-callback: error
+  mocha/max-top-level-suites: error
+  mocha/no-exclusive-tests: error
+  mocha/no-global-tests: error
+  mocha/no-hooks: off
+  mocha/no-hooks-for-single-case: error
+  mocha/no-identical-title: error
+  mocha/no-mocha-arrows: off
+  mocha/no-nested-tests: error
+  mocha/no-pending-tests: error
+  mocha/no-return-and-callback: error
+  mocha/no-sibling-hooks: error
+  mocha/no-skipped-tests: error
+  mocha/no-synchronous-tests: off
+  mocha/no-top-level-hooks: error
+  mocha/valid-suite-description: error
+  mocha/valid-test-description: error
 globals:
   expect: false
 env:
