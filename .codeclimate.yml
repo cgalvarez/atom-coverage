@@ -18,6 +18,7 @@ plugins:
       - .js
   fixme:
     enabled: true
+  # How to configure: https://docs.codeclimate.com/docs/git-legal
   git-legal:
     enabled: false
   markdownlint:
@@ -28,6 +29,8 @@ plugins:
     - c03f7976bb3e27eb1e08b08d0475a15b
     # Trailing question mark in heading.
     - 299b8b7c47d3644f029ad29866c9e5b0
+  # Requires a `shrinkwrap.json` at the project root to work!
+  # So we'll rely on the cloud check by NodeSecurity.io.
   nodesecurity:
     enabled: false
   structure:
