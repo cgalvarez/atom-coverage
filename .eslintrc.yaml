@@ -4,11 +4,13 @@
     - filenames
     - json
     - lodash
+    - node
     - smells
     - you-dont-need-lodash-underscore
   extends:
     - airbnb-base
     - plugin:lodash/canonical
+    - plugin:node/recommended
     - plugin:you-dont-need-lodash-underscore/compatible
   env:
     node: true
@@ -55,6 +57,11 @@
       rules:
         # Rules of plugin `smells` ~> mocha is meant to be chained!
         smells/no-complex-chaining: off
+    - files:
+        - test/**/*.js
+      rules:
+        # Rules of plugin `node` ~> no test file is meant to be published!
+        node/no-unpublished-require: off
     - files:
         - bin/*.js
         - test/**/*.spec.js

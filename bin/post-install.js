@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const { join } = require('path');
 const { existsSync, readJSONSync, writeJSONSync } = require('fs-extra');
 const _ = require('lodash');
