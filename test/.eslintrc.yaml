@@ -10,6 +10,10 @@ rules:
   chai-expect/missing-assertion: error
   chai-expect/no-inner-compare: error
   chai-expect/terminating-properties: error
+  # Rules of plugin `eslint-plugin-filenames`.
+  filenames/match-regex: off
+  filenames/match-exported: off
+  filenames/no-index: off
 globals:
   expect: false
 env:

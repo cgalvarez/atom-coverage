@@ -1,10 +1,27 @@
 ---
-  extends: airbnb-base
+  root: true
+  plugins:
+    - "filenames"
+    - "json"
+  extends:
+    - airbnb-base
   env:
     node: true
     browser: true
     shared-node-browser: true
-  plugins:
-  - "json"
   rules:
     global-require: off
+    # eslint-plugin-filenames
+    filenames/match-regex: error
+    filenames/match-exported:
+      - error
+      - kebab
+    filenames/no-index: off
+  overrides:
+    # Rules of plugin `eslint-plugin-filenames` ~> tests/binaries export nothing!
+    - files:
+        - bin/*.js
+        - test/**/*.spec.js"
+      rules:
+        filenames/match-regex: 0
+        filenames/match-exported: off

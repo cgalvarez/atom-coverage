@@ -7,3 +7,4 @@
 .reports/**/*
 coverage/**/*
 node_modules/**/*
+test/fake/**/*
