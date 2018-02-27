@@ -2,6 +2,8 @@
 # CodeClimate config file configuration: https://docs.codeclimate.com/docs/advanced-configuration
 version: "2"
 plugins:
+  duplication:
+    enabled: true
   # ESLint: https://docs.codeclimate.com/docs/eslint
   eslint:
     enabled: true
@@ -10,9 +12,14 @@ plugins:
       complexity:
         enabled: true
     config:
+      config: .eslintrc.cc.yaml
       extensions:
       - .es6
       - .js
+  fixme:
+    enabled: true
+  git-legal:
+    enabled: false
   markdownlint:
     enabled: true
     exclude_fingerprints:
@@ -21,6 +28,10 @@ plugins:
     - c03f7976bb3e27eb1e08b08d0475a15b
     # Trailing question mark in heading.
     - 299b8b7c47d3644f029ad29866c9e5b0
+  nodesecurity:
+    enabled: false
+  structure:
+    enabled: true
 exclude_patterns:
 - ".git/**/*"
 - ".nyc_output/**/*"
