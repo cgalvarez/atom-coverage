@@ -216,7 +216,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
   });
 
   describe('run()', () => {
-    beforeEach(() => {
+    it('should invoke `nyc` cli', () => {
       stub = { execSync: sinon.stub() };
       requireUUT(null, {
         child_process: {
@@ -225,12 +225,6 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       });
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { run: sinon.spy(nyc, 'run') };
-    });
-
-    afterEach(restoreSandbox);
-
-    it('should invoke `nyc` cli', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT ~> NONE.
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
       nyc.run();
@@ -244,6 +238,8 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       expect(execSyncOpts).to.be.an('object').that.has.all.keys('cwd', 'env', 'stdio');
       expect(execSyncOpts).to.have.property('cwd', cwd);
       expect(execSyncOpts).to.have.property('stdio', 'inherit');
+      // Restore sandbox.
+      restoreSandbox();
     });
   });
 
@@ -471,20 +467,11 @@ describe('UNIT TESTS: nyc instrumenter', () => {
   });
 
   describe('subscribeToMochaRunnerEnd()', () => {
-    beforeEach(() => {
+    it('should subscribe to the mocha runner\'s "end" event', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       setupAtomMochaSandbox();
       spy.subscribeToMochaRunnerEnd = sinon.spy(nyc, 'subscribeToMochaRunnerEnd');
       stub = { collectCoverage: sinon.stub(nyc, 'collectCoverage').callsFake(_.noop) };
-    });
-
-    afterEach(() => {
-      restoreSandbox();
-      delete global.AtomMocha;
-    });
-
-    it('should subscribe to the mocha runner\'s "end" event', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT.
       // 4. Mock filesystem (if read/write operations present) ~> done by `setupAtomMochaSandbox()`.
       // 5. Test!
       nyc.subscribeToMochaRunnerEnd();
@@ -493,23 +480,17 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         .and.have.been.calledWith('end').and.returned();
       expect(spy.mochaRunnerOn.args[0][1]).to.be.a('function');
       expect(stub.collectCoverage).to.have.been.calledOnce.and.calledWith().and.returned();
+      // Restore sandbox.
+      restoreSandbox();
+      delete global.AtomMocha;
     });
   });
 
   describe('collectCoverage()', () => {
-    beforeEach(() => {
+    it('should write to disk the collected coverage', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       setupAtomMochaSandbox();
       spy.collectCoverage = sinon.spy(nyc, 'collectCoverage');
-    });
-
-    afterEach(() => {
-      restoreSandbox();
-      delete global.AtomMocha;
-    });
-
-    it('should write to disk the collected coverage', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT.
       if (!_.has(process.env, 'COVERAGE')) {
         // Running tests without coverage... we have to mock up the global coverage object!
         const fakeCoveredPath = './fake/covered/file/path.js';
@@ -535,6 +516,8 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       if (!_.has(process.env, 'COVERAGE')) {
         delete global.__coverage__; // eslint-disable-line no-underscore-dangle
       }
+      restoreSandbox();
+      delete global.AtomMocha;
     });
   });
 

@@ -171,15 +171,10 @@ describe('UNIT TESTS: manager', () => {
   });
 
   describe('getConfig()', () => {
-    beforeEach(() => {
+    it('should return the current config on demand', () => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { getConfig: sinon.spy(manager, 'getConfig') };
-    });
-
-    afterEach(restoreSandbox);
-
-    it('should return the current config on demand', () => {
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       mockConfigFile();
       // 5. Test!
@@ -189,6 +184,8 @@ describe('UNIT TESTS: manager', () => {
       expect(returnedConfig).to.be.an('object')
         .that.deep.equals(data.config.atomCoverage.defaults);
       expect(spy.getConfig).to.have.been.calledOnce;
+      // Restore sandbox.
+      restoreSandbox();
     });
   });
 
@@ -424,16 +421,10 @@ describe('UNIT TESTS: manager', () => {
   });
 
   describe('testquire()', () => {
-    beforeEach(() => {
+    it('should return filepath if coverage requested but file not required', () => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { testquire: sinon.spy(manager, 'testquire') };
-    });
-
-    afterEach(restoreSandbox);
-
-    it('should return filepath if coverage requested but file not required', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT.
       manager.requireRoot = '.instrumented';
       // 4. Mock filesystem (if read/write operations present) ~> sources root.
       const fakeModules = {};
@@ -444,20 +435,16 @@ describe('UNIT TESTS: manager', () => {
       // 6. Assertions.
       expect(spy.testquire).to.have.been.calledOnce;
       expect(filepath).to.be.a('string').that.equals(join('..', manager.requireRoot, 'fake'));
+      // Restore sandbox.
+      restoreSandbox();
     });
   });
 
   describe('trackCoverage()', () => {
-    beforeEach(() => {
+    it('should invoke the registered instrumenter\'s `trackCoverage`', () => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { trackCoverage: sinon.spy(manager, 'trackCoverage') };
-    });
-
-    afterEach(restoreSandbox);
-
-    it('should invoke the registered instrumenter\'s `trackCoverage`', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT.
       manager.instrumenter = stub.nyc;
       manager.config = _.cloneDeep(data.config.atomCoverage.defaults);
       // 4. Mock filesystem (if read/write operations present) ~> NONE.
@@ -467,6 +454,8 @@ describe('UNIT TESTS: manager', () => {
       expect(spy.trackCoverage).to.have.been.calledOnce;
       expect(stub.nyc.trackCoverage).to.have.been.calledOnce
         .and.have.returned().and.have.been.calledWith();
+      // Restore sandbox.
+      restoreSandbox();
     });
   });
 
