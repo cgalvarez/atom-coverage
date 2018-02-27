@@ -1,0 +1,4 @@
+---
+files:
+  included:
+    - lib/**/*.js

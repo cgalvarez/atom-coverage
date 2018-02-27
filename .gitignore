@@ -1,3 +1,5 @@
 .reports/
 coverage/
 node_modules/
+.inch.config.json
+docs.json
