@@ -72,13 +72,13 @@ describe('UNIT TESTS: post-install script', () => {
     'test:coverage': 'another-cmd',
     'check:coverage': 'another-check',
   };
-  _.forEach(existingScript, (cmd, script) => {
+  Object.keys(existingScript).forEach((script) => {
     it(`should not add the NPM script "${script}" to package.json if present`, () => {
       mock.env.backup(INIT_CWD, fakeCwd);
       // 3. Stub/spy same module functions/methods called by the UUT.
       // 4. Mock filesystem (if read/write operations present) ~> NONE.
       const existingNpmConfig = { scripts: {} };
-      existingNpmConfig.scripts[script] = cmd;
+      existingNpmConfig.scripts[script] = existingScript[script];
       writeJSONSync(npmConfigPath, existingNpmConfig, { spaces: 2 });
       const partiallyChangedNpmConfig = _.defaultsDeep({}, existingNpmConfig, expectedNpmConfig);
       // 5. Test!

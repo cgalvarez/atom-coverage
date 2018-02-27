@@ -18,7 +18,6 @@ const data = require('../helpers/data');
 const cwd = process.cwd();
 const defaultConfigFile = '.babelrc';
 const expectedFilepath = join(cwd, defaultConfigFile);
-const noop = () => {};
 let babel;
 let spy;
 let stub;
@@ -137,7 +136,7 @@ describe('UNIT TESTS: babel transpiler', () => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { ensureConfig: sinon.spy(babel, 'ensureConfig') };
-      stub = { saveConfig: sinon.stub(babel, 'saveConfig').callsFake(noop) };
+      stub = { saveConfig: sinon.stub(babel, 'saveConfig').callsFake(_.noop) };
     });
 
     afterEach(restoreSandbox);
@@ -450,7 +449,7 @@ describe('UNIT TESTS: babel transpiler', () => {
           COVERAGE: 'true',
           NODE_ENV: 'dev',
         };
-        _.forEach(envVars, (value, envVar) => mock.env.backup(envVar, value));
+        Object.keys(envVars).forEach(envVar => mock.env.backup(envVar, envVars[envVar]));
         const atomCoverageConfig = _.cloneDeep(data.config.atomCoverage.defaults);
         atomCoverageConfig.instrumentedPath = join('.reports', '.instrumented');
         atomCoverageConfig.sourcesRoot = `lib${sep}`;
@@ -466,7 +465,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         expect(stub.execSync.args[0][1]).to.have.property('env')
           .that.has.all.keys('BABEL_ENV', 'COVERAGE', 'NODE_ENV', 'PATH');
         // Reset sandbox.
-        _.forEach(envVars, (value, envVar) => mock.env.restore(envVar));
+        Object.keys(envVars).forEach(envVar => mock.env.restore(envVar));
       });
     });
 

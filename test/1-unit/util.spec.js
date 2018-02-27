@@ -1,5 +1,6 @@
 const { existsSync, readFileSync, readJSONSync } = require('fs-extra');
 const yaml = require('js-yaml');
+const _ = require('lodash');
 
 // Testing utils/frameworks.
 const chai = require('chai');
@@ -79,7 +80,7 @@ describe('UNIT TESTS: util', () => {
     });
 
     // Test for falsy values.
-    ['falsy', 'off', '0', 0, [], {}, 3.14, false, () => {}].forEach((falsyValue) => {
+    ['falsy', 'off', '0', 0, [], {}, 3.14, false, _.noop].forEach((falsyValue) => {
       it(`should return \`false\` for env var with falsy value \`${falsyValue}\``, () => {
         const envVar = 'RANDOM_ENV_VAR';
         mock.env.backup(envVar, falsyValue);

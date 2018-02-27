@@ -19,7 +19,6 @@ const data = require('../helpers/data');
 // Variables & constants.
 const cwd = process.cwd();
 const expectedFilepath = join(cwd, '.nycrc.json');
-const noop = () => {};
 let nyc;
 let manager;
 let spy;
@@ -253,7 +252,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { ensureConfig: sinon.spy(nyc, 'ensureConfig') };
-      stub = { saveConfig: sinon.stub(nyc, 'saveConfig').callsFake(noop) };
+      stub = { saveConfig: sinon.stub(nyc, 'saveConfig').callsFake(_.noop) };
     });
 
     afterEach(restoreSandbox);
@@ -476,7 +475,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       setupAtomMochaSandbox();
       spy.subscribeToMochaRunnerEnd = sinon.spy(nyc, 'subscribeToMochaRunnerEnd');
-      stub = { collectCoverage: sinon.stub(nyc, 'collectCoverage').callsFake(noop) };
+      stub = { collectCoverage: sinon.stub(nyc, 'collectCoverage').callsFake(_.noop) };
     });
 
     afterEach(() => {

@@ -21,11 +21,11 @@ const setupNpmConfig = () => {
     'test:coverage': 'atom-coverage',
     'check:coverage': 'nyc check-coverage',
   };
-  _.forEach(scripts, (cmd, name) => {
+  Object.keys(scripts).forEach((name) => {
     _.update(packageJSON, `scripts.${name}`, (v) => {
       if (v) return v;
       modified = true;
-      return cmd;
+      return scripts[name];
     });
   });
 

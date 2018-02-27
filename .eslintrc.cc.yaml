@@ -1,26 +1,16 @@
 ---
   root: true
   plugins:
-    - filenames
-    - json
     - lodash
-    - you-dont-need-lodash-underscore
   extends:
     - airbnb-base
     - plugin:lodash/canonical
-    - plugin:you-dont-need-lodash-underscore/compatible
   env:
     node: true
     browser: true
     shared-node-browser: true
   rules:
     global-require: off
-    # Rules of plugin `filenames`.
-    filenames/match-regex: error
-    filenames/match-exported:
-      - error
-      - kebab
-    filenames/no-index: off
     # Rules of plugin `lodash` ~> disable most of lodash preference over native rules.
     lodash/prefer-constant: error
     lodash/prefer-get: off
@@ -35,11 +25,3 @@
     lodash/prefer-some: off
     lodash/prefer-startswith: off
     lodash/prefer-times: off
-  overrides:
-    # Rules of plugin `filenames` ~> tests/binaries export nothing!
-    - files:
-        - bin/*.js
-        - test/**/*.spec.js"
-      rules:
-        filenames/match-regex: 0
-        filenames/match-exported: off
