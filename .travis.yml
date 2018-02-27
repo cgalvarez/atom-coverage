@@ -32,10 +32,10 @@ script:
   echo "Running tests against $(node -v) ..." &&
   commitlint-travis &&
   run-p lint:* &&
-  npm run test:unit &&
-  npm run test:integration &&
-  npm run test:functional &&
-  npm run test:acceptance
+  yarn run test:unit &&
+  yarn run test:integration &&
+  yarn run test:functional &&
+  yarn run test:acceptance
 # Matrix expansion for `test` stage.
 node_js:
 - 'node'
@@ -61,7 +61,7 @@ jobs:
     - yarn install --ignore-engines
     script:
     - >
-      npm run test:coverage &&
+      yarn run test:coverage &&
       nyc check-coverage
     # Upload coverage info to cloud services and enforce required thresholds.
     # CodeClimate expect to find the `lcov.info` under `coverage/`
