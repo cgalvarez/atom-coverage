@@ -1,5 +1,5 @@
 --reporter mochawesome
---reporter-options reportDir=../.reports/test,quiet=true
+--reporter-options reportDir=../.reports/mochawesome,quiet=true
 --check-leaks
 --globals __coverage__,child_process,AtomMocha,AtomCoverage
 --require ./helpers/fix.js

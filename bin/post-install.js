@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const { join } = require('path');
 const { existsSync, readJSONSync, writeJSONSync } = require('fs-extra');
 const _ = require('lodash');
@@ -12,9 +10,7 @@ const setupNpmConfig = () => {
   }
 
   const packageJSONPath = join(process.env.INIT_CWD, 'package.json');
-  if (!existsSync(packageJSONPath)) {
-    return;
-  }
+  if (!existsSync(packageJSONPath)) return;
   const packageJSON = readJSONSync(packageJSONPath);
 
   let modified = false;
@@ -23,13 +19,12 @@ const setupNpmConfig = () => {
     'test:coverage': 'atom-coverage',
     'check:coverage': 'nyc check-coverage',
   };
-  _.forEach(scripts, (cmd, name) => {
+  Object.keys(scripts).forEach((name) => {
     _.update(packageJSON, `scripts.${name}`, (v) => {
-      if (v) {
-        return v;
-      }
+      if (v) return v;
       modified = true;
-      return cmd;
+      // eslint-disable-next-line security/detect-object-injection
+      return scripts[name]; // Fixed keys, not from user.
     });
   });
 

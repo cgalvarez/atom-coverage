@@ -1,0 +1,30 @@
+# Hidden folders.
+.git
+.nyc_output
+.reports
+
+# Folders.
+coverage
+node_modules
+test
+
+# Hidden files.
+.bithoundrc
+.codeclimate.yml
+.commitlintrc.yaml
+.editorconfig
+.eslintignore
+.eslintrc.cc.yaml
+.eslintrc.yaml
+.gitignore
+.inch.config.json
+.inch.yml
+.mdlrc
+.mdlrc.style.rb
+.nycrc.json
+.travis.yml
+
+# Files.
+docs.json
+npm-debug.log
+yarn.lock

@@ -1,0 +1,55 @@
+---
+  root: true
+  plugins:
+    - lodash
+    - mocha
+    - node
+    - security
+  extends:
+    - airbnb-base
+    - plugin:lodash/canonical
+  env:
+    node: true
+    browser: true
+    shared-node-browser: true
+  rules:
+    global-require: off
+    # Rules of plugin `lodash` ~> disable most of lodash preference over native rules.
+    lodash/prefer-constant: error
+    lodash/prefer-get: off
+    lodash/prefer-includes: off
+    lodash/prefer-is-nil: error
+    lodash/prefer-lodash-chain: off
+    lodash/prefer-lodash-method: off
+    lodash/prefer-lodash-typecheck: error
+    lodash/prefer-matches: off
+    lodash/prefer-noop: error
+    lodash/prefer-over-quantifier: off
+    lodash/prefer-some: off
+    lodash/prefer-startswith: off
+    lodash/prefer-times: off
+  overrides:
+    - files:
+        - test/**/*.js
+      rules:
+        no-unused-expressions: off
+        # Rules of plugin `node` ~> no test file is meant to be published!
+        node/no-unpublished-require: off
+        # Rules of plugin `mocha`
+        mocha/handle-done-callback: error
+        mocha/max-top-level-suites: error
+        mocha/no-exclusive-tests: error
+        mocha/no-global-tests: error
+        mocha/no-hooks: off
+        mocha/no-hooks-for-single-case: error
+        mocha/no-identical-title: error
+        mocha/no-mocha-arrows: off
+        mocha/no-nested-tests: error
+        mocha/no-pending-tests: error
+        mocha/no-return-and-callback: error
+        mocha/no-sibling-hooks: error
+        mocha/no-skipped-tests: error
+        mocha/no-synchronous-tests: off
+        mocha/no-top-level-hooks: error
+        mocha/valid-suite-description: error
+        mocha/valid-test-description: error

@@ -18,7 +18,6 @@ const data = require('../helpers/data');
 const cwd = process.cwd();
 const defaultConfigFile = '.babelrc';
 const expectedFilepath = join(cwd, defaultConfigFile);
-const noop = () => {};
 let babel;
 let spy;
 let stub;
@@ -42,13 +41,13 @@ describe('UNIT TESTS: babel transpiler', () => {
     it('should parse contents of config file', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       const utilStubs = {
-        readConfig: () => _.cloneDeep(data.config.babel.defaults),
-        findConfigFile: () => defaultConfigFile,
+        readConfig: () => {
+          babel.config.settings = _.cloneDeep(data.config.babel.defaults);
+        },
       };
       spy = {
         util: {
           readConfig: sinon.spy(utilStubs.readConfig),
-          findConfigFile: sinon.spy(utilStubs.findConfigFile),
         },
       };
       requireUUT(undefined, { '../util': spy.util });
@@ -63,20 +62,19 @@ describe('UNIT TESTS: babel transpiler', () => {
         .and.have.been.calledWith()
         .and.have.returned()
         .and.have.not.thrown();
-      expect(spy.util.findConfigFile).to.have.been.calledOnce;
       expect(spy.util.readConfig).to.have.been.calledOnce;
     });
 
     it('should set empty settings if no config file found', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       const utilStubs = {
-        readConfig: () => undefined,
-        findConfigFile: () => undefined,
+        readConfig: () => {
+          babel.config.settings = {};
+        },
       };
       spy = {
         util: {
           readConfig: sinon.spy(utilStubs.readConfig),
-          findConfigFile: sinon.spy(utilStubs.findConfigFile),
         },
       };
       requireUUT(undefined, { '../util': spy.util });
@@ -90,8 +88,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         .and.have.been.calledWith()
         .and.have.returned()
         .and.have.not.thrown();
-      expect(spy.util.findConfigFile).to.have.been.calledOnce;
-      expect(spy.util.readConfig).to.have.not.been.called;
+      expect(spy.util.readConfig).to.have.been.calledOnce;
     });
   });
 
@@ -139,7 +136,7 @@ describe('UNIT TESTS: babel transpiler', () => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { ensureConfig: sinon.spy(babel, 'ensureConfig') };
-      stub = { saveConfig: sinon.stub(babel, 'saveConfig').callsFake(noop) };
+      stub = { saveConfig: sinon.stub(babel, 'saveConfig').callsFake(_.noop) };
     });
 
     afterEach(restoreSandbox);
@@ -452,7 +449,7 @@ describe('UNIT TESTS: babel transpiler', () => {
           COVERAGE: 'true',
           NODE_ENV: 'dev',
         };
-        _.forEach(envVars, (value, envVar) => mock.env.backup(envVar, value));
+        Object.keys(envVars).forEach(envVar => mock.env.backup(envVar, envVars[envVar]));
         const atomCoverageConfig = _.cloneDeep(data.config.atomCoverage.defaults);
         atomCoverageConfig.instrumentedPath = join('.reports', '.instrumented');
         atomCoverageConfig.sourcesRoot = `lib${sep}`;
@@ -468,7 +465,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         expect(stub.execSync.args[0][1]).to.have.property('env')
           .that.has.all.keys('BABEL_ENV', 'COVERAGE', 'NODE_ENV', 'PATH');
         // Reset sandbox.
-        _.forEach(envVars, (value, envVar) => mock.env.restore(envVar));
+        Object.keys(envVars).forEach(envVar => mock.env.restore(envVar));
       });
     });
 

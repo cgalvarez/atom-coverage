@@ -16,7 +16,6 @@ const data = require('../helpers/data');
 
 // Variables & constants.
 const cwd = process.cwd();
-const noop = () => {};
 let manager;
 let spy;
 let stub;
@@ -84,14 +83,14 @@ describe('UNIT TESTS: manager', () => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { readConfig: sinon.spy(manager, 'readConfig') };
-      stub.initConfig = sinon.stub(manager, 'initConfig').callsFake(noop);
+      stub.initConfig = sinon.stub(manager, 'initConfig').callsFake(_.noop);
     });
 
     afterEach(restoreSandbox);
 
     // Allowed config files.
-    _.forEach(data.config.atomCoverage.filenames.good, (files, format) => {
-      files.forEach((file) => {
+    Object.keys(data.config.atomCoverage.filenames.good).forEach((format) => {
+      data.config.atomCoverage.filenames.good[format].forEach((file) => {
         it(`should read settings from ${file} in ${format} format`, () => {
           // 4. Mock filesystem (if read/write operations present) ~> NONE
           mockConfigFile(file, format);
@@ -123,8 +122,8 @@ describe('UNIT TESTS: manager', () => {
     });
 
     // Forbidden (and thus ignored) config files.
-    _.forEach(data.config.atomCoverage.filenames.bad, (files, format) => {
-      files.forEach((file) => {
+    Object.keys(data.config.atomCoverage.filenames.bad).forEach((format) => {
+      data.config.atomCoverage.filenames.bad[format].forEach((file) => {
         it(`should NOT read settings from ${file} in ${format} format`, () => {
           // 4. Mock filesystem (if read/write operations present) ~> NONE
           mockConfigFile(file, format);
@@ -157,10 +156,10 @@ describe('UNIT TESTS: manager', () => {
       instrumenter: { instrumenter: 'unsupported', transpiler: 'babel' },
       transpiler: { instrumenter: 'nyc', transpiler: 'tsc' },
     };
-    _.forEach(invalid, (configContents, option) => {
+    Object.keys(invalid).forEach((option) => {
       it(`should throw when invalid value provided for option '${option}'`, () => {
         // 4. Mock filesystem (if read/write operations present) ~> NONE
-        mockConfigFile(undefined, undefined, configContents);
+        mockConfigFile(undefined, undefined, invalid[option]);
         // 5. Test!
         const badConfig = () => manager.readConfig();
         // 6. Assertions.
@@ -172,15 +171,10 @@ describe('UNIT TESTS: manager', () => {
   });
 
   describe('getConfig()', () => {
-    beforeEach(() => {
+    it('should return the current config on demand', () => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { getConfig: sinon.spy(manager, 'getConfig') };
-    });
-
-    afterEach(restoreSandbox);
-
-    it('should return the current config on demand', () => {
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       mockConfigFile();
       // 5. Test!
@@ -190,6 +184,8 @@ describe('UNIT TESTS: manager', () => {
       expect(returnedConfig).to.be.an('object')
         .that.deep.equals(data.config.atomCoverage.defaults);
       expect(spy.getConfig).to.have.been.calledOnce;
+      // Restore sandbox.
+      restoreSandbox();
     });
   });
 
@@ -268,7 +264,7 @@ describe('UNIT TESTS: manager', () => {
       expect(stub.globSync).to.have.not.been.called;
     });
 
-    _.forEach({
+    const unsupported = {
       transpiler: {
         supported: 'babel',
         unsupported: 'coffeescript',
@@ -277,7 +273,9 @@ describe('UNIT TESTS: manager', () => {
         supported: 'nyc',
         unsupported: 'blanket',
       },
-    }, (toTest, type) => {
+    };
+    Object.keys(unsupported).forEach((type) => {
+      const toTest = unsupported[type];
       it(`should throw on unsupported ${type}`, () => {
         // 3. Stub/spy same module functions/methods called by the UUT.
         const expectedConfig = _.defaultsDeep(
@@ -423,16 +421,10 @@ describe('UNIT TESTS: manager', () => {
   });
 
   describe('testquire()', () => {
-    beforeEach(() => {
+    it('should return filepath if coverage requested but file not required', () => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { testquire: sinon.spy(manager, 'testquire') };
-    });
-
-    afterEach(restoreSandbox);
-
-    it('should return filepath if coverage requested but file not required', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT.
       manager.requireRoot = '.instrumented';
       // 4. Mock filesystem (if read/write operations present) ~> sources root.
       const fakeModules = {};
@@ -443,20 +435,16 @@ describe('UNIT TESTS: manager', () => {
       // 6. Assertions.
       expect(spy.testquire).to.have.been.calledOnce;
       expect(filepath).to.be.a('string').that.equals(join('..', manager.requireRoot, 'fake'));
+      // Restore sandbox.
+      restoreSandbox();
     });
   });
 
   describe('trackCoverage()', () => {
-    beforeEach(() => {
+    it('should invoke the registered instrumenter\'s `trackCoverage`', () => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { trackCoverage: sinon.spy(manager, 'trackCoverage') };
-    });
-
-    afterEach(restoreSandbox);
-
-    it('should invoke the registered instrumenter\'s `trackCoverage`', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT.
       manager.instrumenter = stub.nyc;
       manager.config = _.cloneDeep(data.config.atomCoverage.defaults);
       // 4. Mock filesystem (if read/write operations present) ~> NONE.
@@ -466,6 +454,8 @@ describe('UNIT TESTS: manager', () => {
       expect(spy.trackCoverage).to.have.been.calledOnce;
       expect(stub.nyc.trackCoverage).to.have.been.calledOnce
         .and.have.returned().and.have.been.calledWith();
+      // Restore sandbox.
+      restoreSandbox();
     });
   });
 

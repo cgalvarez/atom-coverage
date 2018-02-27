@@ -36,21 +36,21 @@ const envVars = {
 
 describe('UNIT TESTS: main binary `atom-coverage`', () => {
   it('should set env vars and run tests with coverage', () => {
-    _.forEach(envVars, (value, envVar) => mock.env.backup(envVar, value));
+    Object.keys(envVars).forEach(envVar => mock.env.backup(envVar, envVars[envVar]));
     // 3. Stub/spy same module functions/methods called by the UUT.
     // 4. Mock filesystem (if read/write operations present) ~> NONE
     // 5. Test!
     requireUUT();
     // 6. Assertions.
-    _.forEach(envVars, (value, envVar) => {
-      expect(process.env).to.have.property(envVar, value);
+    Object.keys(envVars).forEach((envVar) => {
+      expect(process.env).to.have.property(envVar, envVars[envVar]);
     });
     expect(stub.readConfig).to.have.been.calledOnce
       .and.have.been.calledWith(true).and.have.been.returned();
     expect(stub.runTestsWithCoverage).to.have.been.calledOnce
       .and.have.been.calledWith().and.have.been.returned();
     // Reset sandbox.
-    _.forEach(envVars, (value, envVar) => mock.env.restore(envVar));
+    Object.keys(envVars).forEach(envVar => mock.env.restore(envVar));
     mock.sandbox.restore(spy, stub);
   });
 });

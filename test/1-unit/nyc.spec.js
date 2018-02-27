@@ -19,7 +19,6 @@ const data = require('../helpers/data');
 // Variables & constants.
 const cwd = process.cwd();
 const expectedFilepath = join(cwd, '.nycrc.json');
-const noop = () => {};
 let nyc;
 let manager;
 let spy;
@@ -90,13 +89,13 @@ describe('UNIT TESTS: nyc instrumenter', () => {
     it('should parse contents of config file', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       const utilStubs = {
-        readConfig: () => _.cloneDeep(data.config.nyc.defaults),
-        findConfigFile: () => data.config.nyc.filenames.default,
+        readConfig: () => {
+          nyc.config.settings = _.cloneDeep(data.config.nyc.defaults);
+        },
       };
       spy = {
         util: {
           readConfig: sinon.spy(utilStubs.readConfig),
-          findConfigFile: sinon.spy(utilStubs.findConfigFile),
         },
       };
       requireUUT(undefined, { '../util': spy.util });
@@ -112,20 +111,19 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         .and.have.been.calledWith()
         .and.have.returned()
         .and.have.not.thrown();
-      expect(spy.util.findConfigFile).to.have.been.calledOnce;
       expect(spy.util.readConfig).to.have.been.calledOnce;
     });
 
     it('should set empty settings if no config file found', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       const utilStubs = {
-        readConfig: () => undefined,
-        findConfigFile: () => undefined,
+        readConfig: () => {
+          nyc.config.settings = {};
+        },
       };
       spy = {
         util: {
           readConfig: sinon.spy(utilStubs.readConfig),
-          findConfigFile: sinon.spy(utilStubs.findConfigFile),
         },
       };
       requireUUT(undefined, { '../util': spy.util });
@@ -139,8 +137,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         .and.have.been.calledWith()
         .and.have.returned()
         .and.have.not.thrown();
-      expect(spy.util.findConfigFile).to.have.been.calledOnce;
-      expect(spy.util.readConfig).to.have.not.been.called;
+      expect(spy.util.readConfig).to.have.been.calledOnce;
     });
   });
 
@@ -153,10 +150,24 @@ describe('UNIT TESTS: nyc instrumenter', () => {
 
     afterEach(restoreSandbox);
 
-    it('should create config file', () => {
+    it('should save config file', () => {
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       mock.fs.localFiles({});
       nyc.config.filepath = expectedFilepath;
+      nyc.config.settings = _.cloneDeep(data.config.nyc.defaults);
+      // 5. Test!
+      nyc.saveConfig();
+      // 6. Assertions.
+      expect(spy.saveConfig).to.have.been.calledOnce
+        .and.returned().and.calledWith().and.have.not.thrown();
+      expect(existsSync(expectedFilepath)).to.be.a('boolean').that.equals(true);
+      expect(readJSONSync(expectedFilepath)).to.be.an('object')
+        .that.deep.equals(data.config.nyc.defaults);
+    });
+
+    it('should create default config file if none present', () => {
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      mock.fs.localFiles({});
       nyc.config.settings = _.cloneDeep(data.config.nyc.defaults);
       // 5. Test!
       nyc.saveConfig();
@@ -205,7 +216,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
   });
 
   describe('run()', () => {
-    beforeEach(() => {
+    it('should invoke `nyc` cli', () => {
       stub = { execSync: sinon.stub() };
       requireUUT(null, {
         child_process: {
@@ -214,12 +225,6 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       });
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { run: sinon.spy(nyc, 'run') };
-    });
-
-    afterEach(restoreSandbox);
-
-    it('should invoke `nyc` cli', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT ~> NONE.
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
       nyc.run();
@@ -233,6 +238,8 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       expect(execSyncOpts).to.be.an('object').that.has.all.keys('cwd', 'env', 'stdio');
       expect(execSyncOpts).to.have.property('cwd', cwd);
       expect(execSyncOpts).to.have.property('stdio', 'inherit');
+      // Restore sandbox.
+      restoreSandbox();
     });
   });
 
@@ -241,7 +248,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { ensureConfig: sinon.spy(nyc, 'ensureConfig') };
-      stub = { saveConfig: sinon.stub(nyc, 'saveConfig').callsFake(noop) };
+      stub = { saveConfig: sinon.stub(nyc, 'saveConfig').callsFake(_.noop) };
     });
 
     afterEach(restoreSandbox);
@@ -460,20 +467,11 @@ describe('UNIT TESTS: nyc instrumenter', () => {
   });
 
   describe('subscribeToMochaRunnerEnd()', () => {
-    beforeEach(() => {
+    it('should subscribe to the mocha runner\'s "end" event', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       setupAtomMochaSandbox();
       spy.subscribeToMochaRunnerEnd = sinon.spy(nyc, 'subscribeToMochaRunnerEnd');
-      stub = { collectCoverage: sinon.stub(nyc, 'collectCoverage').callsFake(noop) };
-    });
-
-    afterEach(() => {
-      restoreSandbox();
-      delete global.AtomMocha;
-    });
-
-    it('should subscribe to the mocha runner\'s "end" event', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT.
+      stub = { collectCoverage: sinon.stub(nyc, 'collectCoverage').callsFake(_.noop) };
       // 4. Mock filesystem (if read/write operations present) ~> done by `setupAtomMochaSandbox()`.
       // 5. Test!
       nyc.subscribeToMochaRunnerEnd();
@@ -482,23 +480,17 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         .and.have.been.calledWith('end').and.returned();
       expect(spy.mochaRunnerOn.args[0][1]).to.be.a('function');
       expect(stub.collectCoverage).to.have.been.calledOnce.and.calledWith().and.returned();
+      // Restore sandbox.
+      restoreSandbox();
+      delete global.AtomMocha;
     });
   });
 
   describe('collectCoverage()', () => {
-    beforeEach(() => {
+    it('should write to disk the collected coverage', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       setupAtomMochaSandbox();
       spy.collectCoverage = sinon.spy(nyc, 'collectCoverage');
-    });
-
-    afterEach(() => {
-      restoreSandbox();
-      delete global.AtomMocha;
-    });
-
-    it('should write to disk the collected coverage', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT.
       if (!_.has(process.env, 'COVERAGE')) {
         // Running tests without coverage... we have to mock up the global coverage object!
         const fakeCoveredPath = './fake/covered/file/path.js';
@@ -524,6 +516,8 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       if (!_.has(process.env, 'COVERAGE')) {
         delete global.__coverage__; // eslint-disable-line no-underscore-dangle
       }
+      restoreSandbox();
+      delete global.AtomMocha;
     });
   });
 

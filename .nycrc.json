@@ -5,8 +5,8 @@
     "lib/"
   ],
   "reporter": ["lcov", "text"],
-  "report-dir": ".reports",
-  "temp-directory": ".reports/.nyc_output",
+  "report-dir": "coverage",
+  "temp-directory": "coverage/.nyc_output",
   "per-file": true,
   "branches": 80,
   "functions": 80,

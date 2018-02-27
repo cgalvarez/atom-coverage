@@ -8,9 +8,9 @@ const cwd = process.cwd();
 // Filesystem.
 const localFiles = (files = {}) => {
   const fakeFS = {};
-  _.forEach(files, (contents, filename) => {
+  Object.keys(files).forEach((filename) => {
     const filepath = isAbsolute(filename) ? filename : join(cwd, filename);
-    fakeFS[filepath] = contents;
+    fakeFS[filepath] = files[filename];
   });
   fsMock(fakeFS);
 };

@@ -1,5 +1,6 @@
 const { existsSync, readFileSync, readJSONSync } = require('fs-extra');
 const yaml = require('js-yaml');
+const _ = require('lodash');
 
 // Testing utils/frameworks.
 const chai = require('chai');
@@ -28,14 +29,13 @@ const restoreSandbox = () => mock.sandbox.restore(spy, stub);
 const mockConfigFile = (path, data, format) => {
   const configFiles = {};
   switch (format) {
-    case 'json':
-      configFiles[path] = JSON.stringify(data, null, 2);
-      break;
     case 'yaml':
     case 'yml':
       configFiles[path] = yaml.safeDump(data);
       break;
-    default: break;
+    case 'json':
+    default:
+      configFiles[path] = JSON.stringify(data, null, 2);
   }
   mock.fs.localFiles(configFiles);
 };
@@ -80,7 +80,7 @@ describe('UNIT TESTS: util', () => {
     });
 
     // Test for falsy values.
-    ['falsy', 'off', '0', 0, [], {}, 3.14, false, () => {}].forEach((falsyValue) => {
+    ['falsy', 'off', '0', 0, [], {}, 3.14, false, _.noop].forEach((falsyValue) => {
       it(`should return \`false\` for env var with falsy value \`${falsyValue}\``, () => {
         const envVar = 'RANDOM_ENV_VAR';
         mock.env.backup(envVar, falsyValue);
@@ -117,14 +117,34 @@ describe('UNIT TESTS: util', () => {
         .and.calledWith().and.have.thrown();
     });
 
-    it('should throw on unknown file format', () => {
+    it('should parse as JSON a file without extension (without providing file format)', () => {
+      // 4. Mock filesystem (if read/write operations present) ~> config file to read.
+      mockConfigFile(testFile, testFileData);
+      // 5. Test!
+      const cxt = {
+        filepath: undefined,
+        modified: false,
+        settings: undefined,
+      };
+      util.readConfig.call(cxt, testFile);
+      // 6. Assertions.
+      expect(cxt).to.be.an('object').that.has.deep.property('settings', testFileData);
+      expect(spy.readConfig).to.have.been.calledOnce.and.have.returned();
+    });
+
+    it('should set an empty object as settings if no config file found', () => {
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      const badCall = () => util.readConfig('fake/test/file');
+      const cxt = {
+        filepath: undefined,
+        modified: false,
+        settings: undefined,
+      };
+      util.readConfig.call(cxt, 'fake/test/file');
       // 6. Assertions.
-      expect(badCall).to.throw();
-      expect(spy.readConfig).to.have.been.calledOnce
-        .and.calledWith().and.have.thrown();
+      expect(cxt).to.be.an('object').that.has.deep.property('settings', {});
+      expect(cxt).to.have.property('filepath').that.is.undefined;
+      expect(spy.readConfig).to.have.been.calledOnce.and.have.returned();
     });
 
     ['json', 'yaml', 'yml'].forEach((format) => {
@@ -133,10 +153,33 @@ describe('UNIT TESTS: util', () => {
         const testFilePath = `${testFile}.${format}`;
         mockConfigFile(testFilePath, testFileData, format);
         // 5. Test!
-        const readConfig = util.readConfig(testFilePath, format);
+        const cxt = {
+          filepath: undefined,
+          modified: false,
+          settings: undefined,
+        };
+        util.readConfig.call(cxt, testFilePath, format);
         // 6. Assertions.
-        expect(readConfig).to.be.an('object').that.deep.equals(testFileData);
-        expect(spy.readConfig).to.have.been.calledOnce.and.have.returned(testFileData);
+        expect(cxt).to.be.an('object').that.has.deep.property('settings', testFileData);
+        expect(cxt).to.be.an('object').that.has.property('filepath', testFilePath);
+        expect(spy.readConfig).to.have.been.calledOnce.and.have.returned();
+      });
+
+      it(`should infer the type of a ${format} file from its extension when no format provided`, () => {
+        // 4. Mock filesystem (if read/write operations present) ~> config file to read.
+        const testFilePath = `${testFile}.${format}`;
+        mockConfigFile(testFilePath, testFileData, format);
+        // 5. Test!
+        const cxt = {
+          filepath: undefined,
+          modified: false,
+          settings: undefined,
+        };
+        util.readConfig.call(cxt, testFilePath);
+        // 6. Assertions.
+        expect(cxt).to.be.an('object').that.has.deep.property('settings', testFileData);
+        expect(cxt).to.be.an('object').that.has.property('filepath', testFilePath);
+        expect(spy.readConfig).to.have.been.calledOnce.and.have.returned();
       });
     });
   });
@@ -200,48 +243,6 @@ describe('UNIT TESTS: util', () => {
         expect(writtenConfig).to.be.an('object').that.deep.equals(testFileData);
         expect(spy.writeConfig).to.have.been.calledOnce.and.have.returned();
       });
-    });
-  });
-
-  describe('findConfigFile()', () => {
-    beforeEach(() => {
-      requireUUT();
-      // 3. Stub/spy same module functions/methods called by the UUT.
-      spy = { findConfigFile: sinon.spy(util, 'findConfigFile') };
-    });
-
-    afterEach(restoreSandbox);
-
-    it('should throw if no glob pattern provided', () => {
-      // 4. Mock filesystem (if read/write operations present) ~> NONE
-      // 5. Test!
-      const badCall = () => util.findConfigFile();
-      // 6. Assertions.
-      expect(badCall).to.throw();
-      expect(spy.findConfigFile).to.have.been.calledOnce
-        .and.calledWith().and.have.thrown();
-    });
-
-    it('should return `undefined` if no config file found', () => {
-      // 4. Mock filesystem (if read/write operations present) ~> NONE
-      // 5. Test!
-      const found = util.findConfigFile(testFile);
-      // 6. Assertions.
-      expect(found).to.be.undefined;
-      expect(spy.findConfigFile).to.have.been.calledOnce
-        .and.calledWith().and.have.returned(undefined);
-    });
-
-    it('should find the provided config file if exists', () => {
-      // 4. Mock filesystem (if read/write operations present) ~> config file to read.
-      const configFilePath = '.customrc.json';
-      mockConfigFile(configFilePath, testFileData, 'json');
-      // 5. Test!
-      const found = util.findConfigFile(configFilePath);
-      // 6. Assertions.
-      expect(found).to.be.a('string').that.equals(configFilePath);
-      expect(spy.findConfigFile).to.have.been.calledOnce
-        .and.have.returned(configFilePath);
     });
   });
 });
