@@ -5,12 +5,14 @@
     - json
     - lodash
     - node
+    - security
     - smells
     - you-dont-need-lodash-underscore
   extends:
     - airbnb-base
     - plugin:lodash/canonical
     - plugin:node/recommended
+    - plugin:security/recommended
     - plugin:you-dont-need-lodash-underscore/compatible
   env:
     node: true
@@ -38,13 +40,16 @@
     lodash/prefer-some: off
     lodash/prefer-startswith: off
     lodash/prefer-times: off
-    # Rules of plugin `smells`
+    # Rules of plugin `security`.
+    # See https://github.com/nodesecurity/eslint-plugin-security for rules description.
+    # Rules of plugin `smells`.
     smells/no-switch: off
     smells/no-complex-switch-case: error
     smells/no-setinterval: error
     smells/no-this-assign: error
     smells/no-complex-string-concat: error
     smells/no-complex-chaining: error
+  # https://eslint.org/docs/user-guide/configuring#configuration-based-on-glob-patterns
   overrides:
     - files:
         - lib/manager.js
@@ -62,6 +67,19 @@
       rules:
         # Rules of plugin `node` ~> no test file is meant to be published!
         node/no-unpublished-require: off
+        # Rules of plugin `security`
+        security/detect-unsafe-regex: off
+        security/detect-buffer-noassert: off
+        security/detect-child-process: off
+        security/detect-disable-mustache-escape: off
+        security/detect-eval-with-expression: off
+        security/detect-no-csrf-before-method-override: off
+        security/detect-non-literal-fs-filename: off
+        security/detect-non-literal-regexp: off
+        security/detect-non-literal-require: off
+        security/detect-object-injection: off
+        securiyt/detect-possible-timing-attacks: off
+        security/detect-pseudoRandomBytes: off
     - files:
         - bin/*.js
         - test/**/*.spec.js

@@ -2,6 +2,8 @@
   root: true
   plugins:
     - lodash
+    - node
+    - security
   extends:
     - airbnb-base
     - plugin:lodash/canonical
@@ -25,3 +27,9 @@
     lodash/prefer-some: off
     lodash/prefer-startswith: off
     lodash/prefer-times: off
+  overrides:
+    - files:
+        - test/**/*.js
+      rules:
+        # Rules of plugin `node` ~> no test file is meant to be published!
+        node/no-unpublished-require: off

@@ -23,7 +23,8 @@ const setupNpmConfig = () => {
     _.update(packageJSON, `scripts.${name}`, (v) => {
       if (v) return v;
       modified = true;
-      return scripts[name];
+      // eslint-disable-next-line security/detect-object-injection
+      return scripts[name]; // Fixed keys, not from user.
     });
   });
 
