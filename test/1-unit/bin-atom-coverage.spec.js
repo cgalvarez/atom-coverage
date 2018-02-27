@@ -50,7 +50,7 @@ describe('UNIT TESTS: main binary `atom-coverage`', () => {
     expect(stub.runTestsWithCoverage).to.have.been.calledOnce
       .and.have.been.calledWith().and.have.been.returned();
     // Reset sandbox.
-    Object.keys(envVars).forEach(envVar => mock.env.backup(envVar));
+    Object.keys(envVars).forEach(envVar => mock.env.restore(envVar));
     mock.sandbox.restore(spy, stub);
   });
 });
