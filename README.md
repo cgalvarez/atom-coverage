@@ -8,6 +8,9 @@
 <p align="center">
   <strong>PACKAGE</strong>
   <br />
+  <a href="">
+    <img src="https://img.shields.io/npm/v/atom-coverage.svg" alt="NPM package version" />
+  </a>
   <a href="http://semver.org/spec/v2.0.0.html">
     <img src="http://img.shields.io/SemVer/2.0.0.png"
       alt="Semantic Versioning 2.0.0" />
@@ -76,9 +79,13 @@
       alt="bitHound Code" />
   </a>
   <br />
-  <a href="https://codeclimate.com/github/cgalvarez/atom-coverage">
+  <!--<a href="https://codeclimate.com/github/cgalvarez/atom-coverage">
     <img src="https://codeclimate.com/github/cgalvarez/atom-coverage/badges/issue_count.svg"
-      alt="CodeClimate issue count" />
+      alt="CodeClimate issue count" />-->
+  </a>
+  <a href="https://codeclimate.com/github/cgalvarez/atom-coverage/issues">
+    <img src ="https://img.shields.io/codeclimate/issues/github/cgalvarez/atom-coverage.svg?label=Code%20Climate%20issues"
+      alt="Code Climate issues" />
   </a>
   <a href="https://codeclimate.com/github/cgalvarez/atom-coverage/maintainability">
     <img src="https://api.codeclimate.com/v1/badges/dd177b97982f224495c4/maintainability"
