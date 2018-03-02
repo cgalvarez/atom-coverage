@@ -472,7 +472,7 @@ describe('UNIT TESTS: manager', () => {
     ['babel', 'coffeescript'].forEach((transpiler) => {
       it(`should transpile (${transpiler}) ~> instrument ~> run tests with coverage by \`nyc\``, () => {
         // 3. Stub/spy same module functions/methods called by the UUT.
-        // FIXME Replace with coffeescript transpiler when/if supported.
+        // NOTE Replace with coffeescript transpiler when/if supported.
         manager.transpiler = stub.babel;
         manager.instrumenter = stub.nyc;
         manager.config = _.cloneDeep(data.config.atomCoverage.defaults);
@@ -490,7 +490,7 @@ describe('UNIT TESTS: manager', () => {
     it('should transpile (babel) ~> instrument ~> run tests with coverage by `blanket`', () => {
       // 3. Stub/spy same module functions/methods called by the UUT.
       manager.transpiler = stub.babel;
-      // FIXME Replace with blanket instrumenter when/if supported.
+      // NOTE Replace with blanket instrumenter when/if supported.
       manager.instrumenter = stub.nyc;
       manager.config = _.cloneDeep(data.config.atomCoverage.defaults);
       manager.config.instrumenter = 'blanket';
