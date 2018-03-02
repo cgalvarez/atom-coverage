@@ -93,7 +93,7 @@
     }
   },
   "scripts": {
-    "check": "npm-run-all lint:* test:coverage check:* codeclimate",
+    "check": "npm-run-all lint:* test:coverage check:*",
     "codeclimate": "codeclimate analyze",
     "check:coverage": "nyc check-coverage",
     "dev:ide": "atom --disable-gpu -d .",
