@@ -227,12 +227,13 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       spy = { run: sinon.spy(nyc, 'run') };
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      nyc.run();
+      const testScript = 'custom-test';
+      nyc.run(testScript);
       // 6. Assertions.
       expect(spy.run).to.have.been.calledOnce
-        .and.returned().and.calledWith().and.have.not.thrown();
+        .and.returned().and.calledWith(testScript).and.have.not.thrown();
       expect(stub.execSync).to.have.been.calledOnce
-        .and.calledWith('nyc npm test')
+        .and.calledWith(`nyc npm run ${testScript}`)
         .and.returned().and.have.not.thrown();
       const execSyncOpts = stub.execSync.args[0][1];
       expect(execSyncOpts).to.be.an('object').that.has.all.keys('cwd', 'env', 'stdio');

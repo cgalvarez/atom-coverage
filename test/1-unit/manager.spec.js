@@ -92,7 +92,7 @@ describe('UNIT TESTS: manager', () => {
     Object.keys(data.config.atomCoverage.filenames.good).forEach((format) => {
       data.config.atomCoverage.filenames.good[format].forEach((file) => {
         it(`should read settings from ${file} in ${format} format`, () => {
-          // 4. Mock filesystem (if read/write operations present) ~> NONE
+          // 4. Mock filesystem (if read/write operations present) ~> .atom-coverage
           mockConfigFile(file, format);
           // 5. Test!
           const readConfig = manager.readConfig();
@@ -107,7 +107,7 @@ describe('UNIT TESTS: manager', () => {
     });
 
     it('should read settings from entry "atomCoverage" in package.json', () => {
-      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 4. Mock filesystem (if read/write operations present) ~> package.json
       mockConfigFile('package.json', 'JSON', {
         atomCoverage: data.config.atomCoverage.defaults,
       });
@@ -125,7 +125,7 @@ describe('UNIT TESTS: manager', () => {
     Object.keys(data.config.atomCoverage.filenames.bad).forEach((format) => {
       data.config.atomCoverage.filenames.bad[format].forEach((file) => {
         it(`should NOT read settings from ${file} in ${format} format`, () => {
-          // 4. Mock filesystem (if read/write operations present) ~> NONE
+          // 4. Mock filesystem (if read/write operations present) ~> .atom-coverage
           mockConfigFile(file, format);
           // 5. Test!
           const readConfig = manager.readConfig();
@@ -140,7 +140,7 @@ describe('UNIT TESTS: manager', () => {
 
     // Check that recursive searching upwards is disabled.
     it('should search only in current directory (not upwards)', () => {
-      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 4. Mock filesystem (if read/write operations present) ~> ../.atom-coverage
       mockConfigFile(join('..', data.config.atomCoverage.filenames.default));
       // 5. Test!
       const readConfig = manager.readConfig();
@@ -151,22 +151,60 @@ describe('UNIT TESTS: manager', () => {
         .and.calledWith().and.returned();
     });
 
-    // Check for invalid config.
-    const invalid = {
-      instrumenter: { instrumenter: 'unsupported', transpiler: 'babel' },
-      transpiler: { instrumenter: 'nyc', transpiler: 'tsc' },
+    const valid = {
+      transpiler: ['babel'],
+      instrumenter: ['nyc'],
     };
-    Object.keys(invalid).forEach((option) => {
-      it(`should throw when invalid value provided for option '${option}'`, () => {
-        // 4. Mock filesystem (if read/write operations present) ~> NONE
-        mockConfigFile(undefined, undefined, invalid[option]);
-        // 5. Test!
-        const badConfig = () => manager.readConfig();
-        // 6. Assertions.
-        expect(badConfig).to.throw();
-        expect(spy.readConfig).to.have.been.calledOnce;
-        expect(stub.initConfig).to.have.not.been.called;
+    Object.keys(valid).forEach((type) => {
+      valid[type].forEach((toTest) => {
+        it(`should accept ${toTest} as a supported ${type}`, () => {
+          // 4. Mock filesystem (if read/write operations present) ~> .atom-coverage
+          const atomCoverageConfig = _.cloneDeep(data.config.atomCoverage.defaults);
+          atomCoverageConfig[type] = toTest;
+          mockConfigFile(undefined, undefined, atomCoverageConfig);
+          // 5. Test!
+          const readConfig = manager.readConfig();
+          // 6. Assertions.
+          expect(readConfig).to.be.an('object').that.deep.equals(atomCoverageConfig);
+          expect(spy.readConfig).to.have.been.calledOnce;
+          expect(stub.initConfig).to.have.been.calledOnce
+            .and.calledWith().and.returned();
+        });
       });
+    });
+
+    const invalid = {
+      transpiler: ['typescript'],
+      instrumenter: ['blanket'],
+    };
+    Object.keys(invalid).forEach((type) => {
+      invalid[type].forEach((toTest) => {
+        it(`should throw for unsupported ${type} ${toTest}`, () => {
+          // 4. Mock filesystem (if read/write operations present) ~> .atom-coverage
+          const atomCoverageConfig = _.cloneDeep(data.config.atomCoverage.defaults);
+          atomCoverageConfig[type] = toTest;
+          mockConfigFile(undefined, undefined, atomCoverageConfig);
+          // 5. Test!
+          const unsupported = () => manager.readConfig();
+          // 6. Assertions.
+          expect(unsupported).to.throw();
+          expect(spy.readConfig).to.have.been.called;
+          expect(stub.initConfig).to.have.not.been.called.and.have.thrown();
+        });
+      });
+    });
+
+    it('should throw on unsupported options', () => {
+      // 4. Mock filesystem (if read/write operations present) ~> .atom-coverage
+      const atomCoverageConfig = _.cloneDeep(data.config.atomCoverage.defaults);
+      atomCoverageConfig.nonApiOption = 'unsupported';
+      mockConfigFile(undefined, undefined, atomCoverageConfig);
+      // 5. Test!
+      const badOption = () => manager.readConfig();
+      // 6. Assertions.
+      expect(badOption).to.throw();
+      expect(spy.readConfig).to.have.been.calledOnce;
+      expect(stub.initConfig).to.have.not.been.called;
     });
   });
 
@@ -460,47 +498,39 @@ describe('UNIT TESTS: manager', () => {
   });
 
   describe('runTestsWithCoverage()', () => {
+    // eslint-disable-next-line mocha/no-hooks-for-single-case
     beforeEach(() => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
       spy = { runTestsWithCoverage: sinon.spy(manager, 'runTestsWithCoverage') };
     });
 
+    // eslint-disable-next-line mocha/no-hooks-for-single-case
     afterEach(restoreSandbox);
 
-    // Test a variety of transpilers.
-    ['babel', 'coffeescript'].forEach((transpiler) => {
-      it(`should transpile (${transpiler}) ~> instrument ~> run tests with coverage by \`nyc\``, () => {
-        // 3. Stub/spy same module functions/methods called by the UUT.
-        // NOTE Replace with coffeescript transpiler when/if supported.
-        manager.transpiler = stub.babel;
-        manager.instrumenter = stub.nyc;
-        manager.config = _.cloneDeep(data.config.atomCoverage.defaults);
-        manager.config.transpiler = transpiler;
-        // 5. Test!
-        manager.runTestsWithCoverage();
-        // 6. Assertions.
-        expect(stub.babel.transpile).to.have.been.calledOnce
-          .and.have.been.calledWith().and.have.returned();
-        expect(stub.nyc.run).to.have.been.calledOnce
-          .and.have.been.calledWith().and.have.returned();
+    // Test a variety of combos: transpiler ~> instrumenter.
+    const validCombo = {
+      babel: ['nyc'],
+    };
+    Object.keys(validCombo).forEach((transpiler) => {
+      validCombo[transpiler].forEach((instrumenter) => {
+        it(`should transpile (${transpiler}) ~> instrument/cover tests with \`${instrumenter}\``, () => {
+          // 3. Stub/spy same module functions/methods called by the UUT.
+          const testScript = 'custom-script';
+          manager.transpiler = stub[transpiler];
+          manager.instrumenter = stub[instrumenter];
+          manager.config = _.cloneDeep(data.config.atomCoverage.defaults);
+          manager.config.transpiler = transpiler;
+          manager.config.testScript = testScript;
+          // 5. Test!
+          manager.runTestsWithCoverage();
+          // 6. Assertions.
+          expect(stub.babel.transpile).to.have.been.calledOnce
+            .and.have.been.calledWith().and.have.returned();
+          expect(stub.nyc.run).to.have.been.calledOnce
+            .and.have.been.calledWith(testScript).and.have.returned();
+        });
       });
-    });
-
-    it('should transpile (babel) ~> instrument ~> run tests with coverage by `blanket`', () => {
-      // 3. Stub/spy same module functions/methods called by the UUT.
-      manager.transpiler = stub.babel;
-      // NOTE Replace with blanket instrumenter when/if supported.
-      manager.instrumenter = stub.nyc;
-      manager.config = _.cloneDeep(data.config.atomCoverage.defaults);
-      manager.config.instrumenter = 'blanket';
-      // 5. Test!
-      manager.runTestsWithCoverage();
-      // 6. Assertions.
-      expect(stub.babel.transpile).to.have.been.calledOnce
-        .and.have.been.calledWith().and.have.returned();
-      expect(stub.nyc.run).to.have.been.calledOnce
-        .and.have.been.calledWith().and.have.returned();
     });
   });
 });
