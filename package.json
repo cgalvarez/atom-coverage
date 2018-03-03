@@ -31,10 +31,10 @@
     "lodash": "^4.17.5"
   },
   "devDependencies": {
-    "@commitlint/cli": "^6.1.0",
-    "@commitlint/config-conventional": "^6.1.0",
-    "@commitlint/prompt": "^6.1.0",
-    "@commitlint/travis-cli": "^6.1.0",
+    "@commitlint/cli": "^6.1.2",
+    "@commitlint/config-conventional": "^6.1.2",
+    "@commitlint/prompt": "^6.1.2",
+    "@commitlint/travis-cli": "^6.1.2",
     "@semantic-release/npm": "^3.0.2",
     "chai": "^4.1.2",
     "chokidar-cli": "^1.2.0",
@@ -93,7 +93,7 @@
     }
   },
   "scripts": {
-    "check": "npm-run-all lint:* test:coverage check:* codeclimate",
+    "check": "npm-run-all lint:* test:coverage check:*",
     "codeclimate": "codeclimate analyze",
     "check:coverage": "nyc check-coverage",
     "dev:ide": "atom --disable-gpu -d .",

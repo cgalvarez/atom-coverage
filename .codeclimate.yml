@@ -28,7 +28,11 @@ plugins:
     - 184efb4b1212345dcbe0bf36064230f4
     - c03f7976bb3e27eb1e08b08d0475a15b
     # Trailing question mark in heading.
-    - 299b8b7c47d3644f029ad29866c9e5b0
+    - 82098ef96fff43e6c43f874f768ef70c
+    # Spaces surrounding link text (wronly reported).
+    - f1d8f1048cbd287f2c5696a297926243
+    # Bare URL inside contributor covenant code of conduct (automated).
+    - 13fb507303344d8bd75055a4630ca70b
   # Requires a `shrinkwrap.json` at the project root to work!
   # So we'll rely on the cloud check by NodeSecurity.io.
   nodesecurity:

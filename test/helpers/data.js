@@ -5,6 +5,7 @@
 const configFilename = '.atom-coverage';
 const defaultConfig = {
   instrumenter: 'nyc',
+  testScript: 'test',
   transpiler: 'babel',
 };
 const goodConfigFiles = {
