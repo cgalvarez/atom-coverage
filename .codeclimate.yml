@@ -44,3 +44,5 @@ exclude_patterns:
 # `eslint` when exec by CodeClimate doesn't use the specific config
 # file at `test/.eslintrc.yaml`, that's why we exclude it here.
 - "test/**/*"
+# Automated files which won't be fixed.
+- "CHANGELOG.md"
