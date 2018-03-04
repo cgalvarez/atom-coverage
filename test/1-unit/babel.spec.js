@@ -131,11 +131,11 @@ describe('UNIT TESTS: babel transpiler', () => {
     });
   });
 
-  describe('ensureConfig()', () => {
+  describe('enforceConfig()', () => {
     beforeEach(() => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
-      spy = { ensureConfig: sinon.spy(babel, 'ensureConfig') };
+      spy = { enforceConfig: sinon.spy(babel, 'enforceConfig') };
       stub = { saveConfig: sinon.stub(babel, 'saveConfig').callsFake(_.noop) };
     });
 
@@ -149,9 +149,9 @@ describe('UNIT TESTS: babel transpiler', () => {
       });
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      babel.ensureConfig(data.config.atomCoverage.defaults);
+      babel.enforceConfig(data.config.atomCoverage.defaults);
       // 6. Assertions.
-      expect(spy.ensureConfig).to.have.been.calledOnce
+      expect(spy.enforceConfig).to.have.been.calledOnce
         .and.have.been.calledWith(data.config.atomCoverage.defaults)
         .and.have.returned()
         .and.have.not.thrown();
@@ -168,9 +168,9 @@ describe('UNIT TESTS: babel transpiler', () => {
       babel.config.settings = _.cloneDeep(data.config.babel.defaults);
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      babel.ensureConfig(data.config.atomCoverage.defaults);
+      babel.enforceConfig(data.config.atomCoverage.defaults);
       // 6. Assertions.
-      expect(spy.ensureConfig).to.have.been.calledOnce
+      expect(spy.enforceConfig).to.have.been.calledOnce
         .and.have.been.calledWith(data.config.atomCoverage.defaults)
         .and.have.returned()
         .and.have.not.thrown();
@@ -185,9 +185,9 @@ describe('UNIT TESTS: babel transpiler', () => {
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
       expect(babel.config.settings).to.be.an('object').and.not.have.property('presets');
-      babel.ensureConfig(data.config.atomCoverage.defaults);
+      babel.enforceConfig(data.config.atomCoverage.defaults);
       // 6. Assertions.
-      expect(spy.ensureConfig).to.have.been.calledOnce
+      expect(spy.enforceConfig).to.have.been.calledOnce
         .and.have.been.calledWith(data.config.atomCoverage.defaults)
         .and.have.returned()
         .and.have.not.thrown();
@@ -204,9 +204,9 @@ describe('UNIT TESTS: babel transpiler', () => {
       babel.config.settings.presets = { invalidObj: 'value' };
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      babel.ensureConfig(data.config.atomCoverage.defaults);
+      babel.enforceConfig(data.config.atomCoverage.defaults);
       // 6. Assertions.
-      expect(spy.ensureConfig).to.have.been.calledOnce
+      expect(spy.enforceConfig).to.have.been.calledOnce
         .and.have.been.calledWith(data.config.atomCoverage.defaults)
         .and.have.returned()
         .and.have.not.thrown();
@@ -223,9 +223,9 @@ describe('UNIT TESTS: babel transpiler', () => {
       babel.config.settings.presets = ['env'];
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      babel.ensureConfig(data.config.atomCoverage.defaults);
+      babel.enforceConfig(data.config.atomCoverage.defaults);
       // 6. Assertions.
-      expect(spy.ensureConfig).to.have.been.calledOnce
+      expect(spy.enforceConfig).to.have.been.calledOnce
         .and.have.been.calledWith(data.config.atomCoverage.defaults)
         .and.have.returned()
         .and.have.not.thrown();
@@ -242,9 +242,9 @@ describe('UNIT TESTS: babel transpiler', () => {
       babel.config.settings.presets = ['es2017'];
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      babel.ensureConfig(data.config.atomCoverage.defaults);
+      babel.enforceConfig(data.config.atomCoverage.defaults);
       // 6. Assertions.
-      expect(spy.ensureConfig).to.have.been.calledOnce
+      expect(spy.enforceConfig).to.have.been.calledOnce
         .and.have.been.calledWith(data.config.atomCoverage.defaults)
         .and.have.returned()
         .and.have.not.thrown();
@@ -264,14 +264,14 @@ describe('UNIT TESTS: babel transpiler', () => {
           babel.config.settings.env.test.sourceMaps = value;
           // 4. Mock filesystem (if read/write operations present) ~> NONE
           // 5. Test!
-          babel.ensureConfig(data.config.atomCoverage.defaults);
+          babel.enforceConfig(data.config.atomCoverage.defaults);
           // 6. Assertions.
           expect(babel.config.settings).to.be.an('object')
             .that.has.nested.property('env.test.sourceMaps', value);
           expect(babel.config.modified).to.be.a('boolean').that.equals(false);
           expect(stub.saveConfig).to.have.not.been.called;
         });
-        expect(spy.ensureConfig).to.have.been.calledTwice
+        expect(spy.enforceConfig).to.have.been.calledTwice
           .and.have.been.calledWith(data.config.atomCoverage.defaults)
           .and.have.always.returned()
           .and.have.not.always.thrown();
@@ -284,7 +284,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         delete babel.config.settings.env.test.sourceMaps;
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
-        babel.ensureConfig(data.config.atomCoverage.defaults);
+        babel.enforceConfig(data.config.atomCoverage.defaults);
         // 6. Assertions.
         expect(babel.config.settings).to.be.an('object')
           .that.has.nested.property('env.test.sourceMaps', 'inline');
@@ -299,7 +299,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         babel.config.settings.env.test.sourceMaps = false;
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
-        babel.ensureConfig(data.config.atomCoverage.defaults);
+        babel.enforceConfig(data.config.atomCoverage.defaults);
         // 6. Assertions.
         expect(babel.config.settings).to.be.an('object')
           .that.has.nested.property('env.test.sourceMaps', 'inline');
@@ -314,7 +314,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         delete babel.config.settings.env.test.plugins;
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
-        babel.ensureConfig(data.config.atomCoverage.defaults);
+        babel.enforceConfig(data.config.atomCoverage.defaults);
         // 6. Assertions.
         expect(babel.config.settings).to.be.an('object')
           .that.has.deep.nested.property('env.test.plugins', ['istanbul']);
@@ -329,7 +329,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         babel.config.settings.env.test.plugins = '';
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
-        babel.ensureConfig(data.config.atomCoverage.defaults);
+        babel.enforceConfig(data.config.atomCoverage.defaults);
         // 6. Assertions.
         expect(babel.config.settings).to.be.an('object')
           .that.has.deep.nested.property('env.test.plugins', ['istanbul']);
@@ -344,7 +344,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         babel.config.settings.env.test.plugins = ['es2015-arrow-functions'];
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
-        babel.ensureConfig(data.config.atomCoverage.defaults);
+        babel.enforceConfig(data.config.atomCoverage.defaults);
         // 6. Assertions.
         expect(babel.config.settings).to.be.an('object')
           .that.has.deep.nested.property('env.test.plugins', ['es2015-arrow-functions', 'istanbul']);
@@ -358,7 +358,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         babel.config.settings = _.cloneDeep(data.config.babel.defaults);
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
-        babel.ensureConfig(data.config.atomCoverage.defaults);
+        babel.enforceConfig(data.config.atomCoverage.defaults);
         // 6. Assertions.
         expect(babel.config.settings).to.be.an('object')
           .that.has.deep.nested.property('env.test.plugins', ['istanbul']);
@@ -373,7 +373,7 @@ describe('UNIT TESTS: babel transpiler', () => {
         babel.config.settings.env.test.plugins = ['istanbul', 'es2015-arrow-functions'];
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
-        babel.ensureConfig(data.config.atomCoverage.defaults);
+        babel.enforceConfig(data.config.atomCoverage.defaults);
         // 6. Assertions.
         expect(babel.config.settings).to.be.an('object')
           .that.has.deep.nested.property('env.test.plugins', ['es2015-arrow-functions', 'istanbul']);
@@ -388,7 +388,7 @@ describe('UNIT TESTS: babel transpiler', () => {
       babel.config.settings = _.cloneDeep(data.config.babel.defaults);
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      babel.ensureConfig(data.config.atomCoverage.defaults, true);
+      babel.enforceConfig(data.config.atomCoverage.defaults, true);
       // 6. Assertions.
       expect(babel.config.modified).to.be.a('boolean').that.equals(false);
       expect(stub.saveConfig).to.have.not.been.called;
@@ -401,7 +401,7 @@ describe('UNIT TESTS: babel transpiler', () => {
       delete babel.config.settings.env;
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      babel.ensureConfig(data.config.atomCoverage.defaults, true);
+      babel.enforceConfig(data.config.atomCoverage.defaults, true);
       // 6. Assertions.
       expect(babel.config.modified).to.be.a('boolean').that.equals(false);
       expect(stub.saveConfig).to.have.been.calledOnce
@@ -419,7 +419,7 @@ describe('UNIT TESTS: babel transpiler', () => {
       // 5. Test!
       const atomCoverageConfig = _.cloneDeep(data.config.atomCoverage.defaults);
       atomCoverageConfig.instrumenter = 'blanket';
-      babel.ensureConfig(atomCoverageConfig);
+      babel.enforceConfig(atomCoverageConfig);
       // 6. Assertions.
       expect(babel.config.modified).to.be.a('boolean').that.equals(false);
       expect(stub.saveConfig).to.have.not.been.called;
