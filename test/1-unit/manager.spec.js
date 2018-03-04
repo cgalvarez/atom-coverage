@@ -28,12 +28,12 @@ const requireUUT = (done, proxyquireStubs = {}) => {
     },
     babel: {
       findConfigFile: sinon.stub(),
-      ensureConfig: sinon.stub(),
+      enforceConfig: sinon.stub(),
       transpile: sinon.stub(),
     },
     nyc: {
       findConfigFile: sinon.stub(),
-      ensureConfig: sinon.stub(),
+      enforceConfig: sinon.stub(),
       getOutputFolder: sinon.stub().returns('coverage'),
       trackCoverage: sinon.stub(),
       run: sinon.stub(),
@@ -345,10 +345,10 @@ describe('UNIT TESTS: manager', () => {
           // 6. Assertions.
           expect(stub.globSync).to.have.not.been.called;
           if (saveOnChange === undefined) {
-            expect(stub[toTest.supported].ensureConfig).to.have.been.called
+            expect(stub[toTest.supported].enforceConfig).to.have.been.called
               .and.been.calledWith(expectedConfig, false).and.have.returned();
           } else {
-            expect(stub[toTest.supported].ensureConfig).to.have.been.called
+            expect(stub[toTest.supported].enforceConfig).to.have.been.called
               .and.been.calledWith(expectedConfig, saveOnChange).and.have.returned();
           }
         });
