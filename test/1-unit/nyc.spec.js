@@ -189,7 +189,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
 
     afterEach(restoreSandbox);
 
-    it('should throw if not initialized (with `ensureConfig()`)', () => {
+    it('should throw if not initialized (with `enforceConfig()`)', () => {
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
       const badCall = () => nyc.getOutputFolder();
@@ -244,11 +244,11 @@ describe('UNIT TESTS: nyc instrumenter', () => {
     });
   });
 
-  describe('ensureConfig()', () => {
+  describe('enforceConfig()', () => {
     beforeEach(() => {
       requireUUT();
       // 3. Stub/spy same module functions/methods called by the UUT.
-      spy = { ensureConfig: sinon.spy(nyc, 'ensureConfig') };
+      spy = { enforceConfig: sinon.spy(nyc, 'enforceConfig') };
       stub = { saveConfig: sinon.stub(nyc, 'saveConfig').callsFake(_.noop) };
     });
 
@@ -263,9 +263,9 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       });
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      nyc.ensureConfig(data.config.atomCoverage.defaults);
+      nyc.enforceConfig(data.config.atomCoverage.defaults);
       // 6. Assertions.
-      expect(spy.ensureConfig).to.have.been.calledOnce
+      expect(spy.enforceConfig).to.have.been.calledOnce
         .and.have.been.calledWith(data.config.atomCoverage.defaults)
         .and.have.returned()
         .and.have.not.thrown();
@@ -282,9 +282,9 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       nyc.config.settings = _.cloneDeep(data.config.nyc.defaults);
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      nyc.ensureConfig(data.config.atomCoverage.defaults);
+      nyc.enforceConfig(data.config.atomCoverage.defaults);
       // 6. Assertions.
-      expect(spy.ensureConfig).to.have.been.calledOnce
+      expect(spy.enforceConfig).to.have.been.calledOnce
         .and.have.been.calledWith(data.config.atomCoverage.defaults)
         .and.have.returned()
         .and.have.not.thrown();
@@ -300,9 +300,9 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
         expect(nyc.config.settings).to.be.an('object').and.not.have.property(option);
-        nyc.ensureConfig(data.config.atomCoverage.defaults);
+        nyc.enforceConfig(data.config.atomCoverage.defaults);
         // 6. Assertions.
-        expect(spy.ensureConfig).to.have.been.calledOnce
+        expect(spy.enforceConfig).to.have.been.calledOnce
           .and.have.been.calledWith(data.config.atomCoverage.defaults)
           .and.have.returned()
           .and.have.not.thrown();
@@ -319,9 +319,9 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         nyc.config.settings[option] = true;
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
-        nyc.ensureConfig(data.config.atomCoverage.defaults);
+        nyc.enforceConfig(data.config.atomCoverage.defaults);
         // 6. Assertions.
-        expect(spy.ensureConfig).to.have.been.calledOnce
+        expect(spy.enforceConfig).to.have.been.calledOnce
           .and.have.been.calledWith(data.config.atomCoverage.defaults)
           .and.have.returned()
           .and.have.not.thrown();
@@ -337,9 +337,9 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         nyc.config.settings = _.cloneDeep(data.config.nyc.defaults);
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
-        nyc.ensureConfig(data.config.atomCoverage.defaults);
+        nyc.enforceConfig(data.config.atomCoverage.defaults);
         // 6. Assertions.
-        expect(spy.ensureConfig).to.have.been.calledOnce
+        expect(spy.enforceConfig).to.have.been.calledOnce
           .and.have.been.calledWith(data.config.atomCoverage.defaults)
           .and.have.returned()
           .and.have.not.thrown();
@@ -356,7 +356,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       nyc.config.settings = _.cloneDeep(data.config.nyc.defaults);
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      nyc.ensureConfig(data.config.atomCoverage.defaults, true);
+      nyc.enforceConfig(data.config.atomCoverage.defaults, true);
       // 6. Assertions.
       expect(nyc.config.modified).to.be.a('boolean').that.equals(false);
       expect(stub.saveConfig).to.have.not.been.called;
@@ -369,7 +369,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
       delete nyc.config.settings.instrument;
       // 4. Mock filesystem (if read/write operations present) ~> NONE
       // 5. Test!
-      nyc.ensureConfig(data.config.atomCoverage.defaults, true);
+      nyc.enforceConfig(data.config.atomCoverage.defaults, true);
       // 6. Assertions.
       expect(nyc.config.modified).to.be.a('boolean').that.equals(true);
       expect(stub.saveConfig).to.have.been.calledOnce
@@ -385,7 +385,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         nyc.config.settings = _.cloneDeep(data.config.nyc.defaults);
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
-        nyc.ensureConfig(data.config.atomCoverage.defaults, true);
+        nyc.enforceConfig(data.config.atomCoverage.defaults, true);
         // 6. Assertions.
         expect(nyc.config.modified).to.be.a('boolean').that.equals(false);
         expect(stub.saveConfig).to.have.not.been.called;
@@ -402,7 +402,7 @@ describe('UNIT TESTS: nyc instrumenter', () => {
         nyc.config.settings = nycConfig;
         // 4. Mock filesystem (if read/write operations present) ~> NONE
         // 5. Test!
-        nyc.ensureConfig(data.config.atomCoverage.defaults, true);
+        nyc.enforceConfig(data.config.atomCoverage.defaults, true);
         // 6. Assertions.
         expect(nyc.config.modified).to.be.a('boolean').that.equals(false);
         expect(stub.saveConfig).to.have.not.been.called;
