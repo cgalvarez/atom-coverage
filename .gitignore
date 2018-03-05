@@ -12,3 +12,4 @@ node_modules/
 # Files.
 docs.json
 npm-debug.log
+yarn-error.log
