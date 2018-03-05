@@ -1,5 +1,23 @@
+<a name="1.1.1"></a>
+# [1.1.1](https://github.com/cgalvarez/atom-coverage/compare/v1.1.0...v1.1.1) (2018-03-05)
+
+
+### Bug Fixes
+
+* **babel:** consider short/long preset/plugin names with/out opts ([d38437f](https://github.com/cgalvarez/atom-coverage/commit/d38437f))
+
+
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/cgalvarez/atom-coverage/compare/v1.0.1...v1.1.0) (2018-03-03)
+
+
+### Features
+
+* **config:** new option `testScript` ([8401b52](https://github.com/cgalvarez/atom-coverage/commit/8401b52))
+
+
 <a name="1.0.1"></a>
-# [1.0.1](https://github.com/cgalvarez/atom-coverage/compare/v1.0.1...v0.0.0-semantic-release) (2018-02-27)
+# [1.0.1](https://github.com/cgalvarez/atom-coverage/compare/v1.0.0...v1.0.1) (2018-02-27)
 
 
 ### Bug Fixes
@@ -8,7 +26,7 @@
 
 
 <a name="1.0.0"></a>
-# [1.0.0](https://github.com/cgalvarez/atom-coverage/compare/v1.0.0...v0.0.0-semantic-release) (2018-02-22)
+# [1.0.0](https://github.com/cgalvarez/atom-coverage/compare/v0.0.0-semantic-release...v1.0.0) (2018-02-22)
 
 
 ### Features
