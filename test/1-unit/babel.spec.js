@@ -131,6 +131,378 @@ describe('UNIT TESTS: babel transpiler', () => {
     });
   });
 
+  describe('enforcePresetEnv()', () => {
+    beforeEach(() => {
+      requireUUT();
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      spy = { enforcePresetEnv: sinon.spy(babel, 'enforcePresetEnv') };
+    });
+
+    afterEach(restoreSandbox);
+
+    [3, [3, 'react']].forEach((presets) => {
+      it('should set env preset if malformed config found', () => {
+        // 3. Stub/spy same module functions/methods called by the UUT.
+        const preset = 'env';
+        babel.config.settings = { presets };
+        spy.findAddon = sinon.spy(babel, 'findAddon');
+        // 4. Mock filesystem (if read/write operations present) ~> NONE
+        // 5. Test!
+        babel.enforcePresetEnv();
+        // 6. Assertions.
+        expect(spy.enforcePresetEnv).to.have.been.calledOnce
+          .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+        if (_.isArray(presets)) {
+          expect(spy.findAddon).to.have.been.calledOnce
+            .and.have.been.calledWith(presets, 'preset', preset)
+            .and.have.returned().and.not.have.thrown();
+        } else {
+          expect(spy.findAddon).to.not.have.been.called;
+        }
+        expect(babel.config).to.have.property('modified', true);
+        expect(babel.config.settings).to.have.deep.property('presets', [preset]);
+      });
+    });
+
+    it('should append `babel-preset-env` if not present', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      const preset = 'env';
+      const presets = ['react'];
+      babel.config.settings = { presets };
+      spy.findAddon = sinon.spy(babel, 'findAddon');
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 5. Test!
+      babel.enforcePresetEnv();
+      // 6. Assertions.
+      expect(spy.enforcePresetEnv).to.have.been.calledOnce
+        .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+      expect(spy.findAddon).to.have.been.calledOnce
+        .and.have.been.calledWith(presets, 'preset', preset)
+        .and.have.returned({ index: -1 }).and.not.have.thrown();
+      expect(babel.config).to.have.property('modified', true);
+      expect(babel.config.settings).to.have.deep.property('presets', presets.concat(preset));
+    });
+
+    ['env', 'babel-preset-env'].forEach((name) => {
+      it(`should detect if "${name}" preset present`, () => {
+        // 3. Stub/spy same module functions/methods called by the UUT.
+        const preset = 'env';
+        const presets = ['react', name];
+        babel.config.settings = { presets };
+        spy.findAddon = sinon.spy(babel, 'findAddon');
+        // 4. Mock filesystem (if read/write operations present) ~> NONE
+        // 5. Test!
+        babel.enforcePresetEnv();
+        // 6. Assertions.
+        expect(spy.enforcePresetEnv).to.have.been.calledOnce
+          .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+        expect(spy.findAddon).to.have.been.calledOnce
+          .and.have.been.calledWith(presets, 'preset', preset)
+          .and.have.returned({ index: 1, shorthand: (name === preset) })
+          .and.not.have.thrown();
+        expect(babel.config).to.have.property('modified', false);
+        expect(babel.config.settings).to.have.deep.property('presets', presets);
+      });
+    });
+  });
+
+  describe('enforcePluginIstanbul()', () => {
+    beforeEach(() => {
+      requireUUT();
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      spy = { enforcePluginIstanbul: sinon.spy(babel, 'enforcePluginIstanbul') };
+    });
+
+    afterEach(restoreSandbox);
+
+    it('should inherit global babel config if no env.test config provided', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      const globalPlugins = ['babel-transform-decorators-legacy'];
+      spy.findAddon = sinon.spy(babel, 'findAddon');
+      stub = {
+        inheritGeneralConfig: sinon.stub(babel, 'inheritGeneralConfig')
+          .callsFake(() => globalPlugins),
+      };
+      babel.config.settings = {};
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 5. Test!
+      babel.enforcePluginIstanbul();
+      // 6. Assertions.
+      expect(spy.enforcePluginIstanbul).to.have.been.calledOnce
+        .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+      expect(spy.findAddon).to.have.been.calledOnce
+        .and.have.been.calledWith(globalPlugins, 'plugin', 'istanbul')
+        .and.have.returned({ index: -1 })
+        .and.not.have.thrown();
+      expect(stub.inheritGeneralConfig).to.have.been.calledOnce
+        .and.have.been.calledWith('env.test.plugins')
+        .and.have.returned(globalPlugins)
+        .and.not.have.thrown();
+      expect(babel.config).to.have.property('modified', true);
+      expect(babel.config.settings).to.have.nested.property('env.test.plugins')
+        .that.deep.equals(globalPlugins.concat('istanbul'));
+    });
+
+    it('should set default plugins if malformed config found', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      const plugins = [3, 'babel-transform-decorators-legacy'];
+      babel.config.settings = { env: { test: { plugins } } };
+      spy.findAddon = sinon.spy(babel, 'findAddon');
+      spy.inheritGeneralConfig = sinon.spy(babel, 'inheritGeneralConfig');
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 5. Test!
+      babel.enforcePluginIstanbul();
+      // 6. Assertions.
+      expect(spy.enforcePluginIstanbul).to.have.been.calledOnce
+        .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+      expect(spy.inheritGeneralConfig).to.not.have.been.called;
+      expect(spy.findAddon).to.have.been.calledOnce
+        .and.have.been.calledWith(plugins, 'plugin', 'istanbul')
+        .and.have.returned().and.not.have.thrown();
+      expect(babel.config).to.have.property('modified', true);
+      expect(babel.config.settings).to.have.nested.property('env.test.plugins')
+        .that.deep.equals(['istanbul']);
+    });
+
+    it('should append `babel-plugin-istanbul` if not present', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      const plugins = ['babel-transform-decorators-legacy'];
+      babel.config.settings = { env: { test: { plugins } } };
+      spy.findAddon = sinon.spy(babel, 'findAddon');
+      spy.inheritGeneralConfig = sinon.spy(babel, 'inheritGeneralConfig');
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 5. Test!
+      babel.enforcePluginIstanbul();
+      // 6. Assertions.
+      expect(spy.enforcePluginIstanbul).to.have.been.calledOnce
+        .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+      expect(spy.inheritGeneralConfig).to.not.have.been.called;
+      expect(spy.findAddon).to.have.been.calledOnce
+        .and.have.been.calledWith(plugins, 'plugin', 'istanbul')
+        .and.have.returned({ index: -1 }).and.not.have.thrown();
+      expect(babel.config).to.have.property('modified', true);
+      expect(babel.config.settings).to.have.nested.property('env.test.plugins')
+        .that.deep.equals(plugins.concat('istanbul'));
+    });
+
+    ['istanbul', 'babel-plugin-istanbul'].forEach((name) => {
+      it(`should detect if "${name}" plugin present`, () => {
+        // 3. Stub/spy same module functions/methods called by the UUT.
+        const plugins = ['babel-transform-decorators-legacy', name];
+        babel.config.settings = { env: { test: { plugins } } };
+        spy.findAddon = sinon.spy(babel, 'findAddon');
+        spy.inheritGeneralConfig = sinon.spy(babel, 'inheritGeneralConfig');
+        // 4. Mock filesystem (if read/write operations present) ~> NONE
+        // 5. Test!
+        babel.enforcePluginIstanbul();
+        // 6. Assertions.
+        expect(spy.enforcePluginIstanbul).to.have.been.calledOnce
+          .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+        expect(spy.inheritGeneralConfig).to.not.have.been.called;
+        expect(spy.findAddon).to.have.been.calledOnce
+          .and.have.been.calledWith(plugins, 'plugin', 'istanbul')
+          .and.have.returned({ index: 1, shorthand: (name === 'istanbul') })
+          .and.not.have.thrown();
+        expect(babel.config).to.have.property('modified', false);
+        expect(babel.config.settings).to.have.nested.property('env.test.plugins')
+          .that.deep.equals(plugins);
+      });
+
+      it(`should move "${name}" if present but not in last position`, () => {
+        // 3. Stub/spy same module functions/methods called by the UUT.
+        const plugins = [name, 'babel-transform-decorators-legacy'];
+        babel.config.settings = { env: { test: { plugins } } };
+        spy.findAddon = sinon.spy(babel, 'findAddon');
+        spy.inheritGeneralConfig = sinon.spy(babel, 'inheritGeneralConfig');
+        // 4. Mock filesystem (if read/write operations present) ~> NONE
+        // 5. Test!
+        babel.enforcePluginIstanbul();
+        // 6. Assertions.
+        expect(spy.enforcePluginIstanbul).to.have.been.calledOnce
+          .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+        expect(spy.inheritGeneralConfig).to.not.have.been.called;
+        expect(spy.findAddon).to.have.been.calledOnce
+          .and.have.been.calledWith(plugins, 'plugin', 'istanbul')
+          .and.have.returned({ index: 0, shorthand: (name === 'istanbul') })
+          .and.not.have.thrown();
+        expect(babel.config).to.have.property('modified', true);
+        expect(babel.config.settings).to.have.nested.property('env.test.plugins')
+          .that.deep.equals(['babel-transform-decorators-legacy', name]);
+      });
+    });
+  });
+
+  describe('setupForNyc()', () => {
+    it('should call all internal methods that configure project with `nyc`', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      requireUUT();
+      spy = { setupForNyc: sinon.spy(babel, 'setupForNyc') };
+      stub = {
+        enforceSourceMaps: sinon.stub(babel, 'enforceSourceMaps').callsFake(_.noop),
+        enforcePluginIstanbul: sinon.stub(babel, 'enforcePluginIstanbul').callsFake(_.noop),
+      };
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 5. Test!
+      babel.setupForNyc();
+      // 6. Assertions.
+      expect(spy.setupForNyc).to.have.been.calledOnce
+        .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+      expect(stub.enforcePluginIstanbul).to.have.been.calledOnce.and.have.been.calledWith();
+      // 7. Restore sandbox.
+      restoreSandbox();
+    });
+  });
+
+  describe('enforceSourceMaps()', () => {
+    beforeEach(() => {
+      requireUUT();
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      spy = { enforceSourceMaps: sinon.spy(babel, 'enforceSourceMaps') };
+    });
+
+    afterEach(restoreSandbox);
+
+    ['inline', 'both'].forEach((validValue) => {
+      it(`should not change babel config if sourceMaps option present and valid (${validValue})`, () => {
+        // 3. Stub/spy same module functions/methods called by the UUT.
+        babel.config.settings = { env: { test: { sourceMaps: validValue } } };
+        // 4. Mock filesystem (if read/write operations present) ~> NONE
+        // 5. Test!
+        expect(babel.config.modified).to.be.a('boolean').that.equals(false);
+        babel.enforceSourceMaps();
+        // 6. Assertions.
+        expect(babel.config.settings).to.be.an('object')
+          .that.nested.includes({ 'env.test.sourceMaps': validValue });
+        expect(babel.config.modified).to.be.a('boolean').that.equals(false);
+        expect(spy.enforceSourceMaps).to.have.been.calledOnce
+          .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+      });
+
+      it(`should inherit global babel config if present and valid (${validValue}) when env.test missing`, () => {
+        // 3. Stub/spy same module functions/methods called by the UUT.
+        babel.config.settings = { sourceMaps: validValue };
+        // 4. Mock filesystem (if read/write operations present) ~> NONE
+        // 5. Test!
+        expect(babel.config.modified).to.be.a('boolean').that.equals(false);
+        babel.enforceSourceMaps();
+        // 6. Assertions.
+        expect(babel.config.settings).to.be.an('object')
+          .that.nested.includes({ 'env.test.sourceMaps': validValue });
+        expect(babel.config.modified).to.be.a('boolean').that.equals(true);
+        expect(spy.enforceSourceMaps).to.have.been.calledOnce
+          .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+      });
+    });
+
+    it('should set default value if no test/global value found', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      babel.config.settings = {};
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 5. Test!
+      expect(babel.config.modified).to.be.a('boolean').that.equals(false);
+      babel.enforceSourceMaps();
+      // 6. Assertions.
+      expect(babel.config.settings).to.be.an('object')
+        .that.nested.includes({ 'env.test.sourceMaps': 'inline' });
+      expect(babel.config.modified).to.be.a('boolean').that.equals(true);
+      expect(spy.enforceSourceMaps).to.have.been.calledOnce
+        .and.have.been.calledWith().and.have.returned().and.have.not.thrown();
+    });
+  });
+
+  describe('findAddon()', () => {
+    beforeEach(() => {
+      requireUUT();
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      spy = { findAddon: sinon.spy(babel, 'findAddon') };
+    });
+
+    afterEach(restoreSandbox);
+
+    const toTest = {
+      preset: { short: 'env', long: 'babel-preset-env' },
+      plugin: { short: 'istanbul', long: 'babel-plugin-istanbul' },
+    };
+    const collections = {
+      preset: ['react'],
+      plugin: [['transform-decorators-legacy', {}]],
+    };
+    [false, true].forEach((withOptions) => {
+      Object.keys(toTest).forEach((addonType) => {
+        Object.keys(toTest[addonType]).forEach((nameType) => {
+          it(`should find ${addonType} ${withOptions ? 'with options' : 'without options'} in ${nameType} form`, () => {
+            // 3. Stub/spy same module functions/methods called by the UUT.
+            const addon = toTest[addonType][nameType];
+            const collection = collections[addonType].concat(withOptions ? [[addon, {}]] : addon);
+            // 4. Mock filesystem (if read/write operations present) ~> NONE
+            // 5. Test!
+            const found = babel.findAddon(collection, addonType, toTest[addonType].short);
+            // 6. Assertions.
+            expect(found).to.be.an('object').that.deep.equals({
+              index: 1,
+              shorthand: (nameType === 'short'),
+            });
+            expect(spy.findAddon).to.have.been.calledOnce.and.have.not.thrown();
+          });
+        });
+      });
+    });
+
+    it('should return `undefined` if malformed option', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 5. Test!
+      const found = babel.findAddon([true, 'transform-decorators-legacy'], 'plugin', 'istanbul');
+      // 6. Assertions.
+      expect(found).to.be.undefined;
+      expect(spy.findAddon).to.have.been.calledOnce.and.have.not.thrown();
+    });
+
+    it('should return `index = -1` if not found', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 5. Test!
+      const found = babel.findAddon(['transform-decorators-legacy'], 'plugin', 'istanbul');
+      // 6. Assertions.
+      expect(found).to.be.an('object').that.deep.equals({ index: -1 });
+      expect(spy.findAddon).to.have.been.calledOnce.and.have.not.thrown();
+    });
+  });
+
+  describe('inheritGeneralConfig()', () => {
+    beforeEach(() => {
+      requireUUT();
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      spy = { inheritGeneralConfig: sinon.spy(babel, 'inheritGeneralConfig') };
+    });
+
+    afterEach(restoreSandbox);
+
+    it('should fetch general babel configuration for simple option', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      const sourceMaps = 'both';
+      babel.config.settings = { sourceMaps };
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 5. Test!
+      const inherited = babel.inheritGeneralConfig('env.test.sourceMaps');
+      // 6. Assertions.
+      expect(inherited).to.be.a('string').that.equals(sourceMaps);
+      expect(spy.inheritGeneralConfig).to.have.been.calledOnce.and.have.not.thrown();
+    });
+
+    it('should fetch general babel configuration for complex option', () => {
+      // 3. Stub/spy same module functions/methods called by the UUT.
+      const plugins = ['transform-decorators-legacy', 'istanbul'];
+      babel.config.settings = { plugins };
+      // 4. Mock filesystem (if read/write operations present) ~> NONE
+      // 5. Test!
+      const inherited = babel.inheritGeneralConfig('env.test.plugins');
+      // 6. Assertions.
+      expect(inherited).to.be.an('array').that.deep.equals(plugins);
+      expect(spy.inheritGeneralConfig).to.have.been.calledOnce.and.have.not.thrown();
+    });
+  });
+
   describe('enforceConfig()', () => {
     beforeEach(() => {
       requireUUT();
