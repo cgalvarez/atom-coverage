@@ -48,7 +48,7 @@
     smells/no-setinterval: error
     smells/no-this-assign: error
     smells/no-complex-string-concat: error
-    smells/no-complex-chaining: error
+    smells/no-complex-chaining: off
   # https://eslint.org/docs/user-guide/configuring#configuration-based-on-glob-patterns
   overrides:
     - files:
