@@ -290,7 +290,7 @@ const uut = testquire('folder1/folder2/file');
 If you run `npm test`, `testquire()` will require your source file at
 `lib/folder1/folder2/file.js`.
 
-If you run `npm run test:coverage`, `testquire` will require your instrumented
+If you run `npm run test:coverage`, `testquire()` will require your instrumented
 file at `coverage/.instrumented/folder1/folder2/file.js` (assuming that you're
 using the default options for `nyc` and `atom-coverage`).
 
@@ -335,16 +335,16 @@ $ cd ./atom-coverage
 $ git remote add upstream https://github.com/cgalvarez/atom-coverage
 # 04. Create a new topic branch off the master branch that describe
 #     what your PR does and use it.
-$ git checkout -m 'your-pr-topic'
+$ git checkout -b 'your-pr-topic'
 # 05. Choose on command to install the package dependencies based on
 #     your package manager.
 $ (yarn|npm) install
 # 06. Make your changes and write specs to test them.
 # 07. Ensure that your changes pass the project requirements
 #     (linting, tests, coverage...).
-$ npm run check
+$ (yarn|npm) run check
 # 08. Once you've finished, commit your changes with commitizen.
-$ npm run semantic-commit
+$ (yarn|npm) run semantic-commit
 # 09. Send a pull request describing what you have done.
 ```
 
