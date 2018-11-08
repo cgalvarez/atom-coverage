@@ -22,7 +22,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "cosmiconfig": "^5.0.2",
+    "cosmiconfig": "^5.0.7",
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
     "is-glob": "^4.0.0",
