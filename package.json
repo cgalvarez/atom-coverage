@@ -34,7 +34,7 @@
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^8.1.0",
     "@commitlint/prompt": "^8.1.0",
-    "@commitlint/travis-cli": "^6.1.2",
+    "@commitlint/travis-cli": "^8.1.0",
     "@semantic-release/npm": "^3.0.2",
     "chai": "^4.1.2",
     "chokidar-cli": "^1.2.0",
