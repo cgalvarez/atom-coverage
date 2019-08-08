@@ -1588,9 +1588,10 @@ eslint-plugin-smells@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/eslint-plugin-smells/-/eslint-plugin-smells-1.0.1.tgz#87fdb7324a79689d5c1b11224ae94f32f5399858"
 
-eslint-plugin-you-dont-need-lodash-underscore@^6.3.1:
-  version "6.3.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-you-dont-need-lodash-underscore/-/eslint-plugin-you-dont-need-lodash-underscore-6.3.1.tgz#652ddaf98a5cebb733d0ae9ae7207cf14d3837b6"
+eslint-plugin-you-dont-need-lodash-underscore@^6.6.0:
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-you-dont-need-lodash-underscore/-/eslint-plugin-you-dont-need-lodash-underscore-6.6.0.tgz#708dabd3867163c36091930d9c4088e766a48236"
+  integrity sha512-LEu9RHc0rt3MbX9I4DEVeGp/PLAWNc4L2Ql5PbYka+9cwZy+veDwhgOgzE0qttuD9xPhquDi92Rwk+iXUUYgCQ==
   dependencies:
     kebab-case "^1.0.0"
 
